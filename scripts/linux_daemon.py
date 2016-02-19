@@ -4,7 +4,7 @@ import http.client
 import hmac
 import json
 
-#32-bit key for signing our messages
+#32-bit key for signing our messages - dev
 auth_key = "7d28d176792b29f73855dbdef2d7d5b929315ab2b89e0225aaa52c61513e9edb"
 
 server_url = "localhost"
