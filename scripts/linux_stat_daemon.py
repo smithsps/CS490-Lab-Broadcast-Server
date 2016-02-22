@@ -41,13 +41,13 @@ args = parser.parse_args()
 # TODO: Error Handling
 # Depending on permissions, the w command can slightly differ
 def get_computer_stats():
-    w_out = subprocess.check_output(['w']).decode('utf-8').split('\n')
-    w_header = w_out[0].split(' ')
-    w_users = w_out[2:-1]
 
-    # Start Composing Data Dictionary
+    # Composing Data Dictionary
     data = dict()
     data['time'] = int(time.time())  # Current time, epoch seconds
+    
+    hostname_out = subprocess.check_output(['hostname']).decode('utf-8')
+    data['name'] = hostname_out.split('.')[0]
 
     with open('/proc/uptime', 'r') as f:
         data['uptime'] = int(float(f.readline().split()[0]))
@@ -60,6 +60,10 @@ def get_computer_stats():
         data['loadavg']['ten'] = f_out[2]
         data['loadavg']['current_processes'] = f_out[3]
         data['loadavg']['total_processes'] = f_out[4]
+
+
+    w_out = subprocess.check_output(['w']).decode('utf-8').split('\n')
+    w_users = w_out[2:-1]
 
     data['users'] = list()
 
@@ -146,7 +150,7 @@ if not args.debug:
     daemonize()
 while True:
     stats = get_computer_stats()
-    send_data(stats)
+   #send_data(stats)
 
     # Interval if argument, otherwise run every 5 minutes on the clock
     if args.interval > 0:
