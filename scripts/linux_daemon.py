@@ -58,12 +58,12 @@ def get_computer_stats():
         unique_users.add(line[0])
 
         user['tty'] = line[1]
-        user['from'] = line[2]
-        user['login@'] = line[3]
-        user['idle'] = line[4]
-        user['jcpu'] = line[5]
-        user['pcpu'] = line[6]
-        user['what'] = line[7]
+        #user['from'] = line[2]
+        user['login@'] = line[2]
+        user['idle'] = line[3]
+        user['jcpu'] = line[4]
+        user['pcpu'] = line[5]
+        user['what'] = line[6]
 
         data['users'].append(user)
 
@@ -122,5 +122,5 @@ def daemonize():
 
 
 #daemonize()
-    
+
 get_computer_stats()
