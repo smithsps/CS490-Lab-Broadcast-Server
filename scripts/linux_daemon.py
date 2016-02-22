@@ -40,13 +40,38 @@ def get_computer_stats():
         data['loadavg']['current_processes'] = f_out[3]
         data['loadavg']['total_processes'] = f_out[4]
 
-    print(json.dumps(data,indent=4, separators=(',', ': ')))
+    """# Total Number of Users
+    for item in s.split(','):
+        print(item)
+        if 'users' in item:
+            data['total_users'] = int(item.strip().split(' ')[0]))
+            break"""
 
-    print(w_header)
-    for u in w_users:
-        print(u)
+    data['users'] = list()
 
-data = {"test" : "TEST"}
+    unique_users = set()
+    for line in w_users:
+        line = [l for l in line.split(' ') if l != '']
+        print(line)
+        user = dict()
+        user['user'] = line[0]
+        unique_users.add(line[0])
+
+        user['tty'] = line[1]
+        user['from'] = line[2]
+        user['login@'] = line[3]
+        user['idle'] = line[4]
+        user['jcpu'] = line[5]
+        user['pcpu'] = line[6]
+        user['what'] = line[7]
+
+        data['users'].append(user)
+
+
+    data['total_users'] = len(w_users)
+    data['total_unique_users'] = len(unique_users)
+
+    print(json.dumps(data,sort_keys=True, indent=4, separators=(',', ': ')))
 
 
 def send_authed_data(data):
@@ -60,7 +85,7 @@ def send_authed_data(data):
 
 
 def daemonize():
-	# UNIX double forking.
+    # UNIX double forking.
     # Referenced from http://www.jejik.com/articles/2007/02/a_simple_unix_linux_daemon_in_python/
 	try:
 		pid = os.fork()
@@ -97,4 +122,5 @@ def daemonize():
 
 
 #daemonize()
+    
 get_computer_stats()
