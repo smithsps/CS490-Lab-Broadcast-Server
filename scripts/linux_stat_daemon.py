@@ -150,7 +150,7 @@ if not args.debug:
     daemonize()
 while True:
     stats = get_computer_stats()
-   #send_data(stats)
+    send_data(stats)
 
     # Interval if argument, otherwise run every 5 minutes on the clock
     if args.interval > 0:
