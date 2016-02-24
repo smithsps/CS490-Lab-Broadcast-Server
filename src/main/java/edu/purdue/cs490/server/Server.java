@@ -1,77 +1,54 @@
 package edu.purdue.cs490.server;
 
-import java.io.*;
 import java.net.*;
-import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class Server implements Runnable{
-
+public class Server{
+    private static Server instance;
     ExecutorService executor;
     ServerSocket serverSocket;
-    Socket clientSocket;
-    BufferedReader inFromClient;
-    BufferedWriter  outToClient;
 
     public Server(){
+        if (Server.instance != null) {
+            return;
+        }
+        Server.instance = this;
+
         executor = Executors.newFixedThreadPool(60);
         try{
             serverSocket = new ServerSocket(5000);
         }catch(Exception e){
+            // TODO: Use a real accepted practice, like not Exception e and logging
             System.out.println("Server Socket Failed!");
         }
     }
 
-    public Server(Socket client){
-        this.clientSocket = client;
-        try{
-            this.outToClient = new BufferedWriter(new OutputStreamWriter(this.clientSocket.getOutputStream()));
-        }catch(Exception e){
-            System.out.println("Server Socket Failed!");
-        }
+    public static Server getInstance() {
+        return Server.instance;
     }
 
-    public void analyze(String msg){
-        System.out.println("msg: "+msg);
-    }
-
-
-    public void run(){
-        try{
-            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            //while(true){
-            String read;
-            while(((read = inFromClient.readLine()) != null) && !(read.equals(""))){
-                //String read = inFromClient.readLine();
-                analyze(read);
-            }
-        }catch(Exception e){
-            System.out.println("Connection Lost!");
-        }
-    }
-
-    public void startServer() {
+    public void serverLoop() {
         while(true){
             try{
                 System.out.println("Waiting for client..");
                 Socket cs2 = this.serverSocket.accept();
-                Server cb2 = new Server(cs2);
+                TCPHandler cb2 = new TCPHandler(cs2);
                 executor.execute(cb2);
             }catch(Exception e) {
+                // TODO: Use a real accepted practice, like not Exception e
                 System.out.println("Whoops!");
             }
         }
     }
 
-
-
     public static void main(String[] args){
         try {
             Server cb = new Server();
-            cb.startServer();
+            cb.serverLoop();
         }catch(Exception e) {
+            // TODO: Use a real accepted practice, like not Exception e
             System.out.println("Whoops! It didn't work!");
         }
     }

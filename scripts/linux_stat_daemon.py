@@ -98,13 +98,16 @@ def get_computer_stats():
 def send_data(data):
     conn = http.client.HTTPConnection(args.url, args.port)
 
-    request_data = json.dumps(data)
+    request_data = json.dumps(data) + '\r\n'
     mac = hmac.new(str.encode(auth_key), str.encode(request_data), sha1)
 
     if args.debug:
         print("MAC Generated: {}".format(mac.hexdigest()))
 
-    conn.request("PUT", "/linux", request_data, headers={"Auth": mac.hexdigest()})
+    conn.request("PUT", "/linux", body=request_data, headers={"Auth": mac.hexdigest()})
+   # conn.close()
+
+    # If the server doesnt send a reponse, the connection wont be closed.
     return conn.getresponse()
 
 

@@ -6,7 +6,7 @@ plugins {
 group 'edu.purdue.cs490.server'
 version '0.5'
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
