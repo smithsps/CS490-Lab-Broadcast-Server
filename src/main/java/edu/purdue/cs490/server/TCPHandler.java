@@ -99,7 +99,7 @@ public class TCPHandler implements Runnable{
             }
         }
 
-        String response = "HTTP/1.1 200 Success\n\n" + "{'pod': "+ totalOccupied +"'}";
+        String response = "HTTP/1.1 200 Success\n\n" + "{'moore': "+ totalOccupied +"'}";
         try {
             this.outToClient.write(response);
         } catch (IOException ieo) {
