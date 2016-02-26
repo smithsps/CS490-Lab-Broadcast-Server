@@ -65,10 +65,6 @@ public class TCPHandler implements Runnable{
             inFromClient.read(buffer, 0, contentLength);
             req.setBody(new String(buffer));
 
-            // 200 = Success, and since we are always successful we always success.
-            // In the future we can parse the body and validate it.
-            this.outToClient.write("HTTP/1.1 200");
-
         } catch(Exception e) {
             // TODO: Use a real accepted practice, like not Exception e
             System.out.println("Unable to write to socket");
@@ -77,17 +73,37 @@ public class TCPHandler implements Runnable{
         return req;
     }
 
-    //
+
     public void handlePUT(HTTPRequest req) {
         System.out.format("Received: %s %s %s\n", req.getMethod(), req.getUri(), req.getVersion());
         ObjectMapper mapper = new ObjectMapper();
         try {
             Map data = mapper.readValue(req.getBody(), Map.class);
-            System.out.print(data.get("name"));
-            System.out.print(data.get("occupied"));
+            Server.getInstance().occupied.put((String) data.get("name"), (Boolean) data.get("occupied"));
 
+            // 200 = Success, and since we are always successful we always success.
+            // In the future we can parse the body and validate it.
+            this.outToClient.write("HTTP/1.1 200");
         } catch (IOException ieo) {
             System.out.println("Error while trying to map JSON");
+        }
+    }
+
+    public void handleGET(HTTPRequest req) {
+        System.out.format("Received: %s %s %s\n", req.getMethod(), req.getUri(), req.getVersion());
+
+        int totalOccupied = 0;
+        for (String computer : Server.getInstance().occupied.keySet()) {
+            if (Server.getInstance().occupied.get(computer)) {
+                totalOccupied += 1;
+            }
+        }
+
+        String response = "HTTP/1.1 200 Success\n\n" + "{'pod': "+ totalOccupied +"'}";
+        try {
+            this.outToClient.write(response);
+        } catch (IOException ieo) {
+            System.err.println("Error while trying to write response" + ieo);
         }
     }
 
@@ -111,15 +127,14 @@ public class TCPHandler implements Runnable{
                     handlePUT(req);
                     break;
                 case "GET":
+                    handleGET(req);
                     break;
                 default:
                     System.out.println("Received unsupported HTTP Request: " + req.getMethod());
+                    this.outToClient.write("HTTP/1.1 500 Unsupported Request");
                     break;
             }
-
         } catch(IOException ioe) {
-            // TODO: Use a real accepted practice, like not Exception e
-            // Need specific Exceptions not general
             System.out.println("Problem with TCP I/O "  + ioe);
         } finally {
             try {

@@ -1,15 +1,18 @@
 package edu.purdue.cs490.server;
 
 import java.net.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.sql.*;
+
 
 
 public class Server {
     private static Server instance;
     ExecutorService executor;
     ServerSocket serverSocket;
+
+    ConcurrentHashMap<String, Boolean> occupied = new ConcurrentHashMap<>(30);
 
     public Server(){
         if (Server.instance != null) {
