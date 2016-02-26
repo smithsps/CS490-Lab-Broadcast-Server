@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+<<<<<<< HEAD
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
@@ -13,6 +14,9 @@ import java.lang.NoClassDefFoundError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+=======
+import java.sql.*;
+>>>>>>> e89bf5878c7a8ffbb5fb8694d33d80275d647adc
 
 public class TCPHandler implements Runnable{
 
@@ -91,6 +95,28 @@ public class TCPHandler implements Runnable{
             System.out.println("Error while trying to map JSON");
         }
     }
+    
+    public String handleHTTPRequestMachine(String request) {
+        String body = "";
+
+        //String[] reqTokens = request.split("\n");
+
+        //String verb = reqTokens[0];
+        //String requestURI = reqTokens[1];
+
+        try {
+            // We SHOULD use the content length in the header to read the body
+            // but atm we are lazy and just add a newline in the script
+            body = inFromClient.readLine();
+			//read body to input machine data into sql database
+			
+        } catch(Exception e) {
+            // TODO: Use a real accepted practice, like not Exception e
+            System.out.println("Unable to write to socket");
+        }
+
+        return body;
+    }
 
     public void run() {
         try {
@@ -104,7 +130,6 @@ public class TCPHandler implements Runnable{
             if (message.contains("HTTP/1.1")) {
                 String body = handleHTTPRequest(message);
                 handlePayload(body);
-                message += body;
             }
         } catch(Exception e) {
             // TODO: Use a real accepted practice, like not Exception e
