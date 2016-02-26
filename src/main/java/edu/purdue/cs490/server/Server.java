@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class Server{
+public class Server {
     private static Server instance;
     ExecutorService executor;
     ServerSocket serverSocket;
