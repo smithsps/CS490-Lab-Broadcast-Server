@@ -46,8 +46,6 @@ public class Server {
 
     public static void main(String[] args){
         try {
-			SQLiteJDBC sqlcreate = new SQLiteJDBC();
-			sqlcreate.createSQLdatabase();
             Server cb = new Server();
             cb.serverLoop();
         }catch(Exception e) {
