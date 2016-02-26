@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 import java.sql.*;
 
 
-public class Server{
+public class Server {
     private static Server instance;
     ExecutorService executor;
     ServerSocket serverSocket;

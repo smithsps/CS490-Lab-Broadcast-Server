@@ -65,6 +65,8 @@ def get_computer_stats():
     w_out = subprocess.check_output(['w']).decode('utf-8').split('\n')
     w_users = w_out[2:-1]
 
+    data['occupied'] = False
+
     data['users'] = list()
 
     unique_users = set()
@@ -75,6 +77,9 @@ def get_computer_stats():
         unique_users.add(line[0])
 
         user['tty'] = line[1]
+        if 'tty' in user['tty']:
+            data['occupied'] = True
+
         # user['from'] = line[2]
         user['login@'] = line[2]
         user['idle'] = line[3]
