@@ -3,6 +3,7 @@ package edu.purdue.cs490.server;
 import java.net.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.sql.*;
 
 
 public class Server{
@@ -45,6 +46,8 @@ public class Server{
 
     public static void main(String[] args){
         try {
+			SQLiteJDBC sqlcreate = new SQLiteJDBC();
+			sqlcreate.createSQLdatabase();
             Server cb = new Server();
             cb.serverLoop();
         }catch(Exception e) {

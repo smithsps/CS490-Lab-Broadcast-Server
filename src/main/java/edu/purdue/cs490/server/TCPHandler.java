@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.sql.*;
 
 public class TCPHandler implements Runnable{
 
@@ -29,7 +30,7 @@ public class TCPHandler implements Runnable{
 
     // Silly incomplete
     // Probably better abstracted to a class
-    public String handleHTTPRequest(String request) {
+    public String handleHTTPRequestClient(String request) {
         String body = "";
 
         //String[] reqTokens = request.split("\n");
@@ -50,6 +51,28 @@ public class TCPHandler implements Runnable{
 
         return body;
     }
+    
+    public String handleHTTPRequestMachine(String request) {
+        String body = "";
+
+        //String[] reqTokens = request.split("\n");
+
+        //String verb = reqTokens[0];
+        //String requestURI = reqTokens[1];
+
+        try {
+            // We SHOULD use the content length in the header to read the body
+            // but atm we are lazy and just add a newline in the script
+            body = inFromClient.readLine();
+			//read body to input machine data into sql database
+			
+        } catch(Exception e) {
+            // TODO: Use a real accepted practice, like not Exception e
+            System.out.println("Unable to write to socket");
+        }
+
+        return body;
+    }
 
     public void run() {
         try {
@@ -60,9 +83,11 @@ public class TCPHandler implements Runnable{
                 message += read + '\n';
             }
 
-            if (message.contains("HTTP")) {
-                String body = handleHTTPRequest(message);
+            if (message.contains("GET HTTP")) {
+                String body = handleHTTPRequestClient(message);
                 message += body;
+            }else if(message.contains("PUT HTTP")){
+            	String body = handleHTTPRequestMachine(message);
             }
 
             analyze(message);
