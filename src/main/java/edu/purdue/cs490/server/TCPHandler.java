@@ -6,12 +6,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Map;
-import java.util.List;
-import java.util.HashMap;
 import java.io.IOException;
-import java.lang.NoClassDefFoundError;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import edu.purdue.cs490.server.data.HTTPRequest;
+import edu.purdue.cs490.server.data.HTTPMethod;
+import edu.purdue.cs490.server.data.HTTPResponse;
+
 import java.sql.*;
 
 
@@ -34,134 +34,107 @@ public class TCPHandler implements Runnable{
     }
 
 
+    public HTTPRequest handleHTTPRequest(String request) {
 
-    // Silly incomplete
-    // Probably better abstracted to a class
-    public void handleHTTPRequestClient() {
-        String body = "";
-		SQLiteData reqLab = new SQLiteData();
-		int lwsnb160 = reqLab.grabLab("LWSNB160");
-		int lwsnb158 = reqLab.grabLab("LWSNB158");
-		int lwsnb148 = reqLab.grabLab("LWSNB148");
-		int lwsnb146 = reqLab.grabLab("LWSNB146");
-		int lwsnb131 = reqLab.grabLab("LWSNB131");
-		int haasg56 = reqLab.grabLab("HAASG56");
-		int haasg40 = reqLab.grabLab("HAASG40");
-		int haas257 = reqLab.grabLab("HAAS257");
-        //String[] reqTokens = request.split("\n");
-		String labCount = "lwsnb160:"+Integer.toString(lwsnb160)+"/25, " +
-		"lwsnb158:"+Integer.toString(lwsnb158)+"/25" +
-		"lwsnb148:"+Integer.toString(lwsnb148)+"/25" +
-		"lwsnb146:"+Integer.toString(lwsnb146)+"/25" +
-		"lwsnb131:"+Integer.toString(lwsnb131)+"/25" +
-		"haas56:"+Integer.toString(haasg56)+"/25" +
-		"haas40:"+Integer.toString(haasg40)+"/25" +
-		"haas257:"+Integer.toString(haas257)+"/25";
-		
-        //String verb = reqTokens[0];
-        //String requestURI = reqTokens[1];
-		System.out.println("LWSNB160 total: "+lwsnb160);
-	}
-	
-    // Probably best to abstract abstracted to a class
-    public String handleHTTPRequest(String request) {
-        
-        HashMap<String, String>headers = new HashMap<String, String>(8);
+        HTTPRequest req = new HTTPRequest();
 
-        // Parse HTTP Requst and Headers
-        String[] tokRequest = request.split("\n");
+        String[] tokRequest = request.split("\\r?\\n");
 
         String[] tokRequestLine = tokRequest[0].split(" ");
-        String method = tokRequestLine[0];
-        String uri = tokRequestLine[1];
-        String httpVersion = tokRequestLine[2];
+        req.setMethod(tokRequestLine[0]);
+        req.setUri(tokRequestLine[1]);
+        req.setVersion(tokRequestLine[2]);
 
         for (int i = 1; i < tokRequest.length; i++) {
             String[] tokHeader = tokRequest[i].split(": ");
-            headers.put(tokHeader[0], tokHeader[1]);
+            req.setHeader(tokHeader[0], tokHeader[1]);
         }
 
-        int contentLength = 0;
-        if (headers.containsKey("Content-Length")) {
-            contentLength = Integer.parseInt(headers.get("Content-Length"));
-        } else {
+        if (req.hasHeader("Content-Length")) {
+            int contentLength = Integer.parseInt(req.getHeader("Content-Length"));
+
             try {
-                this.outToClient.write("HTTP/1.1 411 \n\n Length Required");
-            } catch (IOException ie) {
-                // If we are unable to write back, client probably closed connection.
+                char[] buffer = new char[contentLength];
+                inFromClient.read(buffer, 0, contentLength);
+                req.setBody(new String(buffer));
+
+            } catch(Exception e) {
+                // TODO: Use a real accepted practice, like not Exception e
+                System.out.println("Unable to read from socket");
             }
-            return "";
         }
 
-        try {
-            char[] buffer = new char[contentLength];
-            inFromClient.read(buffer, 0, contentLength);
-            String body = new String(buffer);
-
-            // 200 = Success, and since we are always successful we always success.
-            this.outToClient.write("HTTP/1.1 200");
-
-            return body;
-        } catch(Exception e) {
-            // TODO: Use a real accepted practice, like not Exception e
-            System.out.println("Unable to write to socket");
-        }
-
-        return "";
+        return req;
     }
 
-    // Best to have these as a entire java class eventually.
-    public void handlePayload(String body) {
+    public void handlePUT(HTTPRequest req) {
+        System.out.format("Received: %s %s %s\n", req.getMethod(), req.getUri(), req.getVersion());
         ObjectMapper mapper = new ObjectMapper();
         try {
-            Map data = mapper.readValue(body, Map.class);
-            System.out.println(data.get("name"));
-            System.out.println(data.get("occupied"));
+            System.out.println(req.getBody());
+            Map data = mapper.readValue(req.getBody(), Map.class);
+            Server.getInstance().occupied.put((String) data.get("name"), (Boolean) data.get("occupied"));
 
+            // 200 = Success, and since we are always successful we always success.
+            // In the future we can parse the body and validate it.
+            this.outToClient.write("HTTP/1.1 200");
         } catch (IOException ieo) {
             System.out.println("Error while trying to map JSON");
         }
     }
-    
-    public String handleHTTPRequestMachine(String request) {
-        String body = "";
 
-        //String[] reqTokens = request.split("\n");
+    public void handleGET(HTTPRequest req) {
+        System.out.format("Received: %s %s %s\n", req.getMethod(), req.getUri(), req.getVersion());
 
-        //String verb = reqTokens[0];
-        //String requestURI = reqTokens[1];
+        HTTPResponse response = new HTTPResponse();
 
-        try {
-            // We SHOULD use the content length in the header to read the body
-            // but atm we are lazy and just add a newline in the script
-            body = inFromClient.readLine();
-			//read body to input machine data into sql database
-			
-        } catch(Exception e) {
-            // TODO: Use a real accepted practice, like not Exception e
-            System.out.println("Unable to write to socket");
+        int totalOccupied = 0;
+        for (String computer : Server.getInstance().occupied.keySet()) {
+            if (Server.getInstance().occupied.get(computer)) {
+                totalOccupied += 1;
+            }
         }
 
-        return body;
+        response.setHeader("Access-Control-Allow-Origin:", "*");
+
+        response.setBody("{'moore': "+ totalOccupied +"'}");
+
+        try {
+            this.outToClient.write(response.getResponse());
+        } catch (IOException ieo) {
+            System.err.println("Error while trying to write response" + ieo);
+        }
     }
 
     public void run() {
         try {
             String message = "";
             String read;
-
             while(((read = inFromClient.readLine()) != null) && !(read.equals(""))){
                 message += read + '\n';
             }
 
-            if (message.contains("HTTP/1.1")) {
-                String body = handleHTTPRequest(message);
-                handlePayload(body);
+            if (!message.contains("HTTP/1.1")) {
+                // Only Accept HTTP Requests
+                return;
             }
-        } catch(Exception e) {
-            // TODO: Use a real accepted practice, like not Exception e
-            // Need specific Exceptions not general
-            System.out.println("Connection Lost!");
+
+            HTTPRequest req = handleHTTPRequest(message);
+
+            switch(req.getMethod()) {
+                case PUT:
+                    handlePUT(req);
+                    break;
+                case GET:
+                    handleGET(req);
+                    break;
+                default:
+                    System.out.println("Received unsupported HTTP Request: " + req.getMethod());
+                    this.outToClient.write("HTTP/1.1 500 Unsupported Request");
+                    break;
+            }
+        } catch(IOException ioe) {
+            System.out.println("Problem with TCP I/O "  + ioe);
         } finally {
             try {
                 this.outToClient.close();
