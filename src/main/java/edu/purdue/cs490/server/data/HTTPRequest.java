@@ -3,17 +3,19 @@ package edu.purdue.cs490.server.data;
 import java.util.HashMap;
 
 public class HTTPRequest {
-    String method, uri, version;
+
+    HTTPMethod method;
+    String uri, version;
     HashMap<String, String> headers = new HashMap<String, String>(8);
     String body;
 
     public HTTPRequest() {}
 
     public void setMethod(String method) {
-        this.method = method;
+        this.method = HTTPMethod.valueOf(method.toUpperCase());
     }
 
-    public String getMethod() {
+    public HTTPMethod getMethod() {
         return method;
     }
 

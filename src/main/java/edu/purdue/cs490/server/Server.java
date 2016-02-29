@@ -27,6 +27,7 @@ public class Server {
             // TODO: Use a real accepted practice, like not Exception e and logging
             System.out.println("Server Socket Failed!");
         }
+        System.out.println("Server started at " + serverSocket.getLocalSocketAddress());
     }
 
     public static Server getInstance() {
@@ -36,13 +37,12 @@ public class Server {
     public void serverLoop() {
         while(true){
             try{
-                System.out.println("Waiting for client..");
                 Socket cs2 = this.serverSocket.accept();
                 TCPHandler cb2 = new TCPHandler(cs2);
                 executor.execute(cb2);
             }catch(Exception e) {
                 // TODO: Use a real accepted practice, like not Exception e
-                System.out.println("Whoops!");
+                System.out.println("Error while accepting socket.");
             }
         }
     }

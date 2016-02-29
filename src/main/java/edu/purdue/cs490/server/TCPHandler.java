@@ -6,10 +6,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Map;
-import java.util.HashMap;
 import java.io.IOException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.purdue.cs490.server.data.HTTPRequest;
+import edu.purdue.cs490.server.data.HTTPMethod;
+import edu.purdue.cs490.server.data.HTTPResponse;
 
 import java.sql.*;
 
@@ -37,7 +38,7 @@ public class TCPHandler implements Runnable{
 
         HTTPRequest req = new HTTPRequest();
 
-        String[] tokRequest = request.split("\n");
+        String[] tokRequest = request.split("\\r?\\n");
 
         String[] tokRequestLine = tokRequest[0].split(" ");
         req.setMethod(tokRequestLine[0]);
@@ -49,35 +50,28 @@ public class TCPHandler implements Runnable{
             req.setHeader(tokHeader[0], tokHeader[1]);
         }
 
-        int contentLength = 0;
         if (req.hasHeader("Content-Length")) {
-            contentLength = Integer.parseInt(req.getHeader("Content-Length"));
-        } else {
+            int contentLength = Integer.parseInt(req.getHeader("Content-Length"));
+
             try {
-                this.outToClient.write("HTTP/1.1 411 Length Required");
-            } catch (IOException ie) {
-                return req;
+                char[] buffer = new char[contentLength];
+                inFromClient.read(buffer, 0, contentLength);
+                req.setBody(new String(buffer));
+
+            } catch(Exception e) {
+                // TODO: Use a real accepted practice, like not Exception e
+                System.out.println("Unable to read from socket");
             }
-        }
-
-        try {
-            char[] buffer = new char[contentLength];
-            inFromClient.read(buffer, 0, contentLength);
-            req.setBody(new String(buffer));
-
-        } catch(Exception e) {
-            // TODO: Use a real accepted practice, like not Exception e
-            System.out.println("Unable to write to socket");
         }
 
         return req;
     }
 
-
     public void handlePUT(HTTPRequest req) {
         System.out.format("Received: %s %s %s\n", req.getMethod(), req.getUri(), req.getVersion());
         ObjectMapper mapper = new ObjectMapper();
         try {
+            System.out.println(req.getBody());
             Map data = mapper.readValue(req.getBody(), Map.class);
             Server.getInstance().occupied.put((String) data.get("name"), (Boolean) data.get("occupied"));
 
@@ -92,6 +86,8 @@ public class TCPHandler implements Runnable{
     public void handleGET(HTTPRequest req) {
         System.out.format("Received: %s %s %s\n", req.getMethod(), req.getUri(), req.getVersion());
 
+        HTTPResponse response = new HTTPResponse();
+
         int totalOccupied = 0;
         for (String computer : Server.getInstance().occupied.keySet()) {
             if (Server.getInstance().occupied.get(computer)) {
@@ -99,9 +95,12 @@ public class TCPHandler implements Runnable{
             }
         }
 
-        String response = "HTTP/1.1 200 Success\n\n" + "{'moore': "+ totalOccupied +"'}";
+        response.setHeader("Access-Control-Allow-Origin:", "*");
+
+        response.setBody("{'moore': "+ totalOccupied +"'}");
+
         try {
-            this.outToClient.write(response);
+            this.outToClient.write(response.getResponse());
         } catch (IOException ieo) {
             System.err.println("Error while trying to write response" + ieo);
         }
@@ -123,10 +122,10 @@ public class TCPHandler implements Runnable{
             HTTPRequest req = handleHTTPRequest(message);
 
             switch(req.getMethod()) {
-                case "PUT":
+                case PUT:
                     handlePUT(req);
                     break;
-                case "GET":
+                case GET:
                     handleGET(req);
                     break;
                 default:
