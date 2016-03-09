@@ -1,7 +1,7 @@
 package edu.purdue.cs490.server;
 
-import java.net.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.net.Socket;
+import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -11,8 +11,6 @@ public class Server {
     private static Server instance;
     ExecutorService executor;
     ServerSocket serverSocket;
-
-    ConcurrentHashMap<String, Boolean> occupied = new ConcurrentHashMap<>(30);
 
     public Server(){
         if (Server.instance != null) {
@@ -27,6 +25,10 @@ public class Server {
             // TODO: Use a real accepted practice, like not Exception e and logging
             System.out.println("Server Socket Failed!");
         }
+
+        SQLiteJDBC sqlcreate = new SQLiteJDBC();
+        sqlcreate.createSQLdatabase();
+
         System.out.println("Server started at " + serverSocket.getLocalSocketAddress());
     }
 

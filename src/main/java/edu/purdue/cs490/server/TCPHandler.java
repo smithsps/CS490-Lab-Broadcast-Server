@@ -5,14 +5,16 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Map;
 import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import edu.purdue.cs490.server.data.HTTPRequest;
 import edu.purdue.cs490.server.data.HTTPMethod;
 import edu.purdue.cs490.server.data.HTTPResponse;
-
-import java.sql.*;
 
 
 
@@ -73,7 +75,9 @@ public class TCPHandler implements Runnable{
         try {
             System.out.println(req.getBody());
             Map data = mapper.readValue(req.getBody(), Map.class);
-            Server.getInstance().occupied.put((String) data.get("name"), (Boolean) data.get("occupied"));
+
+            // Replace with SQL Insert
+            // Server.getInstance().occupied.put((String) data.get("name"), (Boolean) data.get("occupied"));
 
             // 200 = Success, and since we are always successful we always success.
             // In the future we can parse the body and validate it.
@@ -88,16 +92,29 @@ public class TCPHandler implements Runnable{
 
         HTTPResponse response = new HTTPResponse();
 
-        int totalOccupied = 0;
-        for (String computer : Server.getInstance().occupied.keySet()) {
-            if (Server.getInstance().occupied.get(computer)) {
-                totalOccupied += 1;
-            }
-        }
-
         response.setHeader("Access-Control-Allow-Origin", "*");
 
-        response.setBody("{\"moore\": "+ totalOccupied +"}");
+        SQLiteData reqLab = new SQLiteData();
+
+        Map<String, Integer> labs = new HashMap<>();
+
+        labs.put("LWSNB160", reqLab.grabLab("LWSNB158"));
+        labs.put("LWSNB158", reqLab.grabLab("LWSNB158"));
+        labs.put("LWSNB148", reqLab.grabLab("LWSNB148"));
+        labs.put("LWSNB146", reqLab.grabLab("LWSNB146"));
+        labs.put("LWSNB131", reqLab.grabLab("LWSNB131"));
+        labs.put("HAASG56", reqLab.grabLab("HAASG56"));
+        labs.put("HAASG40", reqLab.grabLab("HAASG40"));
+        labs.put("HAAS257", reqLab.grabLab("HAAS257"));
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectWriter objWriter = mapper.writer().withDefaultPrettyPrinter();
+
+        try {
+            response.setBody(objWriter.writeValueAsString(labs));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
         try {
             this.outToClient.write(response.getResponse());
@@ -144,6 +161,4 @@ public class TCPHandler implements Runnable{
             }
         }
     }
-
-
 }
