@@ -45,6 +45,7 @@ public class HTTPResponse {
 
         for (String k : headers.keySet()) {
             res.append(k);
+            res.append(": ");
             res.append(getHeader(k));
             res.append("\r\n");
         }

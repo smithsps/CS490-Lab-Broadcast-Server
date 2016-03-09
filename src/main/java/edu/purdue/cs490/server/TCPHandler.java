@@ -95,9 +95,9 @@ public class TCPHandler implements Runnable{
             }
         }
 
-        response.setHeader("Access-Control-Allow-Origin:", "*");
+        response.setHeader("Access-Control-Allow-Origin", "*");
 
-        response.setBody("{'moore': "+ totalOccupied +"'}");
+        response.setBody("{\"moore\": "+ totalOccupied +"}");
 
         try {
             this.outToClient.write(response.getResponse());
@@ -144,4 +144,6 @@ public class TCPHandler implements Runnable{
             }
         }
     }
+
+
 }
