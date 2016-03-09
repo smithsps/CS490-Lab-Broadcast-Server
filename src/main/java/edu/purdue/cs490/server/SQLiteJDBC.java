@@ -205,11 +205,11 @@ public class SQLiteJDBC
          String  mach = rs.getString("MACHINE_NAME");
          int cnt  = rs.getInt("PC_AMOUNT");
          String  os = rs.getString("OS");
-         System.out.println( "LAB_ROOM = " + lab );
+         /*System.out.println( "LAB_ROOM = " + lab );
          System.out.println( "MACHINE_NAME = " + mach );
          System.out.println( "PC_AMOUNT = " + cnt );
          System.out.println( "OS = " + os );
-         System.out.println();
+         System.out.println();*/
       }
       rs.close();
       stmt.close();
@@ -219,9 +219,9 @@ public class SQLiteJDBC
       while ( rs.next() ) {
          String mach = rs.getString("MACHINE_NAME");
          int cnt  = rs.getInt("OCCUPIED");
-         System.out.println( "MACHINE_NAME = " + mach );
+         /* System.out.println( "MACHINE_NAME = " + mach );
          System.out.println( "OCCUPIED = " + cnt );
-         System.out.println();
+         System.out.println(); */
       }
       rs.close();
       stmt.close();

@@ -45,9 +45,9 @@ def get_computer_stats():
     # Composing Data Dictionary
     data = dict()
     data['time'] = int(time.time())  # Current time, epoch seconds
-    
+
     hostname_out = subprocess.check_output(['hostname']).decode('utf-8')
-    data['name'] = hostname_out.split('.')[0]
+    data['name'] = hostname_out.strip().split('.')[0]
 
     with open('/proc/uptime', 'r') as f:
         data['uptime'] = int(float(f.readline().split()[0]))
