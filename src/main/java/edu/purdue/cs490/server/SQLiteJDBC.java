@@ -1,16 +1,18 @@
 package edu.purdue.cs490.server;
 
 import java.sql.*;
+import java.util.logging.Logger;
 
 public class SQLiteJDBC
 {
+  private static final Logger log = Logger.getLogger(SQLiteJDBC.class.getName());
+
   public void createSQLdatabase()
   {
     Connection c = null;
     Statement stmt = null;
     String sql = null;
     try {
-      Class.forName("org.sqlite.JDBC");
       c = DriverManager.getConnection("jdbc:sqlite:test.db");
       System.out.println("Opened database successfully");
 	  c.setAutoCommit(false);
@@ -205,11 +207,11 @@ public class SQLiteJDBC
          String  mach = rs.getString("MACHINE_NAME");
          int cnt  = rs.getInt("PC_AMOUNT");
          String  os = rs.getString("OS");
-         /*System.out.println( "LAB_ROOM = " + lab );
-         System.out.println( "MACHINE_NAME = " + mach );
-         System.out.println( "PC_AMOUNT = " + cnt );
-         System.out.println( "OS = " + os );
-         System.out.println();*/
+         log.finest("LAB_ROOM = " + lab);
+         log.finest("MACHINE_NAME = " + mach );
+         log.finest("PC_AMOUNT = " + cnt );
+         log.finest("OS = " + os );
+         log.finest("");
       }
       rs.close();
       stmt.close();
@@ -219,9 +221,8 @@ public class SQLiteJDBC
       while ( rs.next() ) {
          String mach = rs.getString("MACHINE_NAME");
          int cnt  = rs.getInt("OCCUPIED");
-         /* System.out.println( "MACHINE_NAME = " + mach );
-         System.out.println( "OCCUPIED = " + cnt );
-         System.out.println(); */
+         log.finest("MACHINE_NAME = " + mach );
+         log.finest("");
       }
       rs.close();
       stmt.close();
@@ -253,11 +254,10 @@ public class SQLiteJDBC
       c.close();
 */      
 ///////////////////////////////END///////////////////////////////////////      
-    } catch ( Exception e ) {
-      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-      System.exit(0);
+    } catch ( SQLException e ) {
+      log.severe("Error while creating SQL Table: "  + e.getMessage());
     }
-    System.out.println("Table created successfully");
+    log.finer("Table created successfully");
   }
 }
 

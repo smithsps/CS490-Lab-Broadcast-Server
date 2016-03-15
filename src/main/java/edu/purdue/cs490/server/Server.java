@@ -1,10 +1,12 @@
 package edu.purdue.cs490.server;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Server {
@@ -12,24 +14,25 @@ public class Server {
     ExecutorService executor;
     ServerSocket serverSocket;
 
-    public Server(){
+    private static final Logger log = Logger.getLogger(Server.class.getName());
+
+    public Server() {
         if (Server.instance != null) {
             return;
         }
         Server.instance = this;
 
         executor = Executors.newFixedThreadPool(60);
-        try{
+        try {
             serverSocket = new ServerSocket(5000);
-        }catch(Exception e){
-            // TODO: Use a real accepted practice, like not Exception e and logging
-            System.out.println("Server Socket Failed!");
+        } catch(IOException e){
+            log.log(Level.SEVERE, "Unable to create server socket.", e);
         }
 
         SQLiteJDBC sqlcreate = new SQLiteJDBC();
         sqlcreate.createSQLdatabase();
 
-        System.out.println("Server started at " + serverSocket.getLocalSocketAddress());
+        log.log(Level.INFO, "Server started at " + serverSocket.getLocalSocketAddress());
     }
 
     public static Server getInstance() {
@@ -37,25 +40,19 @@ public class Server {
     }
 
     public void serverLoop() {
-        while(true){
-            try{
-                Socket cs2 = this.serverSocket.accept();
-                TCPHandler cb2 = new TCPHandler(cs2);
-                executor.execute(cb2);
-            }catch(Exception e) {
-                // TODO: Use a real accepted practice, like not Exception e
-                System.out.println("Error while accepting socket.");
+        while(true) {
+            try {
+                Socket sock = this.serverSocket.accept();
+                TCPHandler thread = new TCPHandler(sock);
+                executor.execute(thread);
+            } catch(IOException e) {
+                log.log(Level.SEVERE, "Unable to create server socket.", e);
             }
         }
     }
 
-    public static void main(String[] args){
-        try {
-            Server cb = new Server();
-            cb.serverLoop();
-        }catch(Exception e) {
-            // TODO: Use a real accepted practice, like not Exception e
-            System.out.println("Whoops! It didn't work!");
-        }
+    public static void main(String[] args) {
+        Server server = new Server();
+        server.serverLoop();
     }
 }

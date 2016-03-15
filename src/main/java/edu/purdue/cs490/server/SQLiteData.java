@@ -1,9 +1,13 @@
 package edu.purdue.cs490.server;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SQLiteData
 {
+  private static final Logger log = Logger.getLogger(SQLiteData.class.getName());
+
   public int grabLab(String labroom)
   {
     Connection c = null;
@@ -29,7 +33,7 @@ public class SQLiteData
       c.close();
 	  
     } catch ( Exception e ) {
-      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+      log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
       System.exit(0);
     }
     return total;

@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,19 +21,24 @@ import edu.purdue.cs490.server.data.HTTPResponse;
 
 
 public class TCPHandler implements Runnable{
-
     Socket clientSocket;
     BufferedWriter outToClient;
     BufferedReader inFromClient;
 
+    private static final Logger log = Logger.getLogger(TCPHandler.class.getName());
+
     public TCPHandler(Socket client) {
         this.clientSocket = client;
+
         try {
             this.inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        } catch(IOException e) {
+            log.log(Level.WARNING, "Could not create input reader for client.", e);
+        }
+        try {
             this.outToClient = new BufferedWriter(new OutputStreamWriter(this.clientSocket.getOutputStream()));
-        } catch(Exception e) {
-            // TODO: Use a real accepted practice, like not Exception e
-            System.out.println("Server Socket Failed!");
+        } catch(IOException e) {
+            log.log(Level.WARNING, "Could not create output writer for client.", e);
         }
     }
 
@@ -59,10 +66,8 @@ public class TCPHandler implements Runnable{
                 char[] buffer = new char[contentLength];
                 inFromClient.read(buffer, 0, contentLength);
                 req.setBody(new String(buffer));
-
-            } catch(Exception e) {
-                // TODO: Use a real accepted practice, like not Exception e
-                System.out.println("Unable to read from socket");
+            } catch(IOException e) {
+                log.log(Level.WARNING, "Unable to read from socket", e);
             }
         }
 
@@ -82,8 +87,8 @@ public class TCPHandler implements Runnable{
             // 200 = Success, and since we are always successful we always success.
             // In the future we can parse the body and validate it.
             this.outToClient.write("HTTP/1.1 200");
-        } catch (IOException ieo) {
-            System.out.println("Error while trying to map JSON");
+        } catch (IOException e) {
+            log.log(Level.WARNING, "Error while trying to map JSON from response", e);
         }
     }
 
@@ -113,13 +118,13 @@ public class TCPHandler implements Runnable{
         try {
             response.setBody(objWriter.writeValueAsString(labs));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.log(Level.WARNING, "Error while building json response for labs", e);
         }
 
         try {
             this.outToClient.write(response.getResponse());
-        } catch (IOException ieo) {
-            System.err.println("Error while trying to write response" + ieo);
+        } catch (IOException e) {
+            log.log(Level.WARNING, "Error while trying to write response", e);
         }
     }
 
@@ -146,18 +151,18 @@ public class TCPHandler implements Runnable{
                     handleGET(req);
                     break;
                 default:
-                    System.out.println("Received unsupported HTTP Request: " + req.getMethod());
+                    log.log(Level.WARNING, "Received unsupported HTTP Request", req);
                     this.outToClient.write("HTTP/1.1 500 Unsupported Request");
                     break;
             }
-        } catch(IOException ioe) {
-            System.out.println("Problem with TCP I/O "  + ioe);
+        } catch(IOException e) {
+            log.log(Level.WARNING, "Problem with TCP I/O", e);
         } finally {
             try {
                 this.outToClient.close();
                 this.inFromClient.close();
-            } catch (IOException ioe) {
-                // If we are unable to close the connection, err it's proabably already closed.?
+            } catch (IOException e) {
+                log.log(Level.WARNING, "Trouble trying to close socket.", e);
             }
         }
     }
