@@ -101,19 +101,22 @@ def get_computer_stats():
 
 # TODO: No handling for connection errors
 def send_data(data):
-    conn = http.client.HTTPConnection(args.url, args.port)
+    try:
+        conn = http.client.HTTPConnection(args.url, args.port, timeout=5)
 
-    request_data = json.dumps(data) + '\r\n'
-    mac = hmac.new(str.encode(auth_key), str.encode(request_data), sha1)
+        request_data = json.dumps(data) + '\r\n'
+        mac = hmac.new(str.encode(auth_key), str.encode(request_data), sha1)
 
-    if args.debug:
-        print("MAC Generated: {}".format(mac.hexdigest()))
+        if args.debug:
+            print("MAC Generated: {}".format(mac.hexdigest()))
 
-    conn.request("PUT", "/linux", body=request_data, headers={"Auth": mac.hexdigest()})
-   # conn.close()
-
-    # If the server doesnt send a reponse, the connection wont be closed.
-    return conn.getresponse()
+        conn.request("PUT", "/linux", body=request_data, headers={"Auth": mac.hexdigest()})
+       
+        return conn.getresponse().status
+    except Exception as e:
+        if args.debug:
+            print("Error while connecting to server, exiting: {0}".format(e))
+        sys.exit(1)
 
 
 # Daemonize, we disconnect the process from the terminal
