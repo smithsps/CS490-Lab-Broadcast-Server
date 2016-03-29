@@ -34,7 +34,6 @@ public class SQLiteData
 	  
     } catch ( Exception e ) {
       log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
-      System.exit(0);
     }
     return total;
   }
@@ -59,7 +58,6 @@ public class SQLiteData
 		  
 		} catch ( Exception e ) {
 		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
-		  System.exit(0);
 		}
 	}
 	public void addBroadcaster(String username, String room, String help)
@@ -82,7 +80,6 @@ public class SQLiteData
 		  
 		} catch ( Exception e ) {
 		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
-		  System.exit(0);
 		}
 	}
 	
@@ -105,7 +102,6 @@ public class SQLiteData
 		  
 		} catch ( Exception e ) {
 		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
-		  System.exit(0);
 		}
 	}
 	
@@ -138,7 +134,6 @@ public class SQLiteData
 		  
 		} catch ( Exception e ) {
 		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
-		  System.exit(0);
 		}
 		return allBroadcasters;
 	}
@@ -174,7 +169,6 @@ public class SQLiteData
 		  
 		} catch ( Exception e ) {
 		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
-		  System.exit(0);
 		}
 		return courseBroadcasters;
 	}
@@ -199,7 +193,6 @@ public class SQLiteData
 		  
 		} catch ( Exception e ) {
 		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
-		  System.exit(0);
 		}
 	}
 	
@@ -224,7 +217,6 @@ public class SQLiteData
 		  
 		} catch ( Exception e ) {
 		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
-		  System.exit(0);
 		}
 	}
 }
