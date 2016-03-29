@@ -21,11 +21,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'edu.purdue.cs490.server.Server'
-    }
-}
 
 shadowJar {
     classifier = 'fat'

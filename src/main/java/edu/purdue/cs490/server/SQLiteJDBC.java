@@ -1,17 +1,29 @@
 package edu.purdue.cs490.server;
 
 import java.sql.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SQLiteJDBC
 {
   private static final Logger log = Logger.getLogger(SQLiteJDBC.class.getName());
 
+  public SQLiteJDBC() {
+      try {
+          Class.forName("org.sqlite.JDBC");
+      } catch (ClassNotFoundException e) {
+          log.log(Level.SEVERE, "Could not load JDBC Driver.", e);
+          System.exit(0);
+      }
+  }
+
   public void createSQLdatabase()
   {
     Connection c = null;
     Statement stmt = null;
     String sql = null;
+
+      //
     try {
       c = DriverManager.getConnection("jdbc:sqlite:test.db");
       System.out.println("Opened database successfully");

@@ -15,7 +15,6 @@ public class SQLiteData
     String sql = null;
     int total = 0;
     try {
-      Class.forName("org.sqlite.JDBC");
       c = DriverManager.getConnection("jdbc:sqlite:test.db");
       System.out.println("Opened database successfully");
 	  c.setAutoCommit(false);
@@ -32,8 +31,8 @@ public class SQLiteData
       stmt.close();
       c.close();
 	  
-    } catch ( Exception e ) {
-      log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
+    } catch ( SQLException e ) {
+      log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
     }
     return total;
   }
@@ -44,7 +43,6 @@ public class SQLiteData
 		Statement stmt = null;
 		String sql = null;
 		try {
-		  Class.forName("org.sqlite.JDBC");
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
 		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
@@ -56,8 +54,8 @@ public class SQLiteData
 		  stmt.close();
 		  c.close();
 		  
-		} catch ( Exception e ) {
-		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
+		} catch ( SQLException e ) {
+		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
 		}
 	}
 	public void addBroadcaster(String username, String room, String help)
@@ -66,7 +64,6 @@ public class SQLiteData
 		Statement stmt = null;
 		String sql = null;
 		try {
-		  Class.forName("org.sqlite.JDBC");
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
 		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
@@ -78,8 +75,8 @@ public class SQLiteData
 		  stmt.close();
 		  c.close();
 		  
-		} catch ( Exception e ) {
-		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
+		} catch ( SQLException e ) {
+		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
 		}
 	}
 	
@@ -89,7 +86,6 @@ public class SQLiteData
 		Statement stmt = null;
 		String sql = null;
 		try {
-		  Class.forName("org.sqlite.JDBC");
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
 		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
@@ -100,8 +96,8 @@ public class SQLiteData
 		  stmt.close();
 		  c.close();
 		  
-		} catch ( Exception e ) {
-		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
+		} catch ( SQLException e ) {
+		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
 		}
 	}
 	
@@ -112,7 +108,6 @@ public class SQLiteData
 		String sql = null;
 		String allBroadcasters = null;
 		try {
-		  Class.forName("org.sqlite.JDBC");
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
 		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
@@ -132,8 +127,8 @@ public class SQLiteData
 		  stmt.close();
 		  c.close();
 		  
-		} catch ( Exception e ) {
-		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
+		} catch ( SQLException e ) {
+		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
 		}
 		return allBroadcasters;
 	}
@@ -145,7 +140,6 @@ public class SQLiteData
 		String sql = null;
 		String courseBroadcasters = null;
 		try {
-		  Class.forName("org.sqlite.JDBC");
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
 		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
@@ -167,8 +161,8 @@ public class SQLiteData
 		  stmt.close();
 		  c.close();
 		  
-		} catch ( Exception e ) {
-		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
+		} catch ( SQLException e ) {
+		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
 		}
 		return courseBroadcasters;
 	}
@@ -179,7 +173,6 @@ public class SQLiteData
 		Statement stmt = null;
 		String sql = null;
 		try {
-		  Class.forName("org.sqlite.JDBC");
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
 		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
@@ -191,8 +184,8 @@ public class SQLiteData
 		  stmt.close();
 		  c.close();
 		  
-		} catch ( Exception e ) {
-		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
+		} catch ( SQLException e ) {
+		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
 		}
 	}
 	
@@ -202,7 +195,6 @@ public class SQLiteData
 		Statement stmt = null;
 		String sql = null;
 		try {
-		  Class.forName("org.sqlite.JDBC");
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
 		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
@@ -215,8 +207,8 @@ public class SQLiteData
 		  stmt.close();
 		  c.close();
 		  
-		} catch ( Exception e ) {
-		  log.log(Level.FINE, e.getClass().getName() + ": " + e.getMessage() );
+		} catch ( SQLException e ) {
+		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
 		}
 	}
 }
