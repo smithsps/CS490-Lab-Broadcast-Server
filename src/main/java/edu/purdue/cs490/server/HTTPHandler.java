@@ -23,12 +23,13 @@ public class HTTPHandler implements Runnable{
     Socket clientSocket;
     BufferedWriter outToClient;
     BufferedReader inFromClient;
-    SQLiteData sqlData = new SQLiteData();
+    SQLiteData sqlData;
 
     private static final Logger log = Logger.getLogger(HTTPHandler.class.getName());
 
     public HTTPHandler(Socket client) {
         this.clientSocket = client;
+        sqlData = Server.getInstance().sqlData;
 
         try {
             this.inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));

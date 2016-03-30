@@ -16,7 +16,6 @@ public class SQLiteData
   public SQLiteData(){
 	   try {
       c = DriverManager.getConnection("jdbc:sqlite:test.db");
-      System.out.println("Opened database successfully");
 	  c.setAutoCommit(false);
 	   }catch( SQLException e ) {
       log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
