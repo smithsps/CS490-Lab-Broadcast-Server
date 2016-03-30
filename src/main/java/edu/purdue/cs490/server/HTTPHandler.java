@@ -78,10 +78,10 @@ public class HTTPHandler implements Runnable{
 
     // Only handles input from the linux machines atm.
     public void handlePUT(HTTPRequest req) {
-        System.out.format("Received: %s %s %s\n", req.getMethod(), req.getUri(), req.getVersion());
+        log.fine(String.format("Received: %s %s %s\n", req.getMethod(), req.getUri(), req.getVersion()));
         ObjectMapper mapper = new ObjectMapper();
         try {
-            System.out.println(req.getBody());
+            log.fine(req.getBody());
             Map data = mapper.readValue(req.getBody(), Map.class);
 
             String machinename = (String) data.get("name");

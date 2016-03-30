@@ -58,8 +58,11 @@ public class SQLiteData
 		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);*/
 
+		  machine = machine.toUpperCase();
+		  labroom = labroom.toUpperCase();
+
 		  stmt = c.createStatement();
-		  ResultSet rs = stmt.executeQuery(
+		  stmt.executeUpdate(
 			"UPDATE "+labroom+" SET OCCUPIED = "+occupied+" WHERE MACHINE_NAME = '"+machine+"';");
 		  /*rs.close();
 		  stmt.close();
