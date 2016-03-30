@@ -134,7 +134,7 @@ public class HTTPHandler implements Runnable{
             while(((read = inFromClient.readLine()) != null) && !(read.equals(""))){
                 message += read + '\n';
             }
-
+			System.out.println("msg: "+message);
             if (!message.contains("HTTP/1.1")) {
                 // Only Accept HTTP Requests
                 return;
