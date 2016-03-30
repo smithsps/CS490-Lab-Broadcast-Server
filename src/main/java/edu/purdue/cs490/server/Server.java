@@ -32,7 +32,7 @@ public class Server {
 
         SQLiteJDBC sqlcreate = new SQLiteJDBC();
         sqlcreate.createSQLdatabase();
-        SQLiteData sqlData = new SQLiteData();
+        sqlData = new SQLiteData();
 
         log.log(Level.INFO, "Server started at " + serverSocket.getLocalSocketAddress());
     }
