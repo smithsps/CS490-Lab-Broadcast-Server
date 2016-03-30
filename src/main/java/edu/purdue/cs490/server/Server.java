@@ -43,7 +43,7 @@ public class Server {
         while(true) {
             try {
                 Socket sock = this.serverSocket.accept();
-                TCPHandler thread = new TCPHandler(sock);
+                HTTPHandler thread = new HTTPHandler(sock);
                 executor.execute(thread);
             } catch(IOException e) {
                 log.log(Level.SEVERE, "Unable to create server socket.", e);

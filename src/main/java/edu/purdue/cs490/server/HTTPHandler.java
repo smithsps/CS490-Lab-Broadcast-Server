@@ -15,19 +15,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import edu.purdue.cs490.server.data.HTTPRequest;
-import edu.purdue.cs490.server.data.HTTPMethod;
 import edu.purdue.cs490.server.data.HTTPResponse;
 
 
 
-public class TCPHandler implements Runnable{
+public class HTTPHandler implements Runnable{
     Socket clientSocket;
     BufferedWriter outToClient;
     BufferedReader inFromClient;
 
-    private static final Logger log = Logger.getLogger(TCPHandler.class.getName());
+    private static final Logger log = Logger.getLogger(HTTPHandler.class.getName());
 
-    public TCPHandler(Socket client) {
+    public HTTPHandler(Socket client) {
         this.clientSocket = client;
 
         try {
@@ -103,7 +102,7 @@ public class TCPHandler implements Runnable{
 
         Map<String, Integer> labs = new HashMap<>();
 
-        labs.put("LWSNB160", reqLab.grabLab("LWSNB158"));
+        labs.put("LWSNB160", reqLab.grabLab("LWSNB160"));
         labs.put("LWSNB158", reqLab.grabLab("LWSNB158"));
         labs.put("LWSNB148", reqLab.grabLab("LWSNB148"));
         labs.put("LWSNB146", reqLab.grabLab("LWSNB146"));
