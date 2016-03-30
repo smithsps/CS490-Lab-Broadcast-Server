@@ -8,16 +8,28 @@ public class SQLiteData
 {
   private static final Logger log = Logger.getLogger(SQLiteData.class.getName());
 
-  public int grabLab(String labroom)
-  {
-    Connection c = null;
-    Statement stmt = null;
-    String sql = null;
-    int total = 0;
-    try {
+  Connection c = null;
+  Statement stmt = null;
+  String sql = null;
+    
+  
+  public SQLiteData(){
+	   try {
       c = DriverManager.getConnection("jdbc:sqlite:test.db");
       System.out.println("Opened database successfully");
 	  c.setAutoCommit(false);
+	   }catch( SQLException e ) {
+      log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
+	   }
+  }
+  
+  public int grabLab(String labroom)
+  {
+    int total = 0;
+    try {
+      /*c = DriverManager.getConnection("jdbc:sqlite:test.db");
+      System.out.println("Opened database successfully");
+	  c.setAutoCommit(false);*/
 
       stmt = c.createStatement();
       ResultSet rs = stmt.executeQuery( "SELECT * FROM "+labroom+";" );
@@ -27,9 +39,9 @@ public class SQLiteData
          	total++;
          }
       }
-      rs.close();
+      /*rs.close();
       stmt.close();
-      c.close();
+      c.close();*/
 	  
     } catch ( SQLException e ) {
       log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
@@ -39,19 +51,20 @@ public class SQLiteData
   
 	public void updateLabPC(String labroom, String machine, int occupied)
 	{
-		Connection c = null;
+		/*Connection c = null;
 		Statement stmt = null;
-		String sql = null;
+		String sql = null;*/
 		try {
-		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
-		  c.setAutoCommit(false);
+		  /*c = DriverManager.getConnection("jdbc:sqlite:test.db");
+		  System.out.println("Opened database successfully");
+		  c.setAutoCommit(false);*/
 
 		  stmt = c.createStatement();
 		  ResultSet rs = stmt.executeQuery(
 			"UPDATE "+labroom+" SET OCCUPIED = "+occupied+" WHERE MACHINE_NAME = '"+machine+"';");
-		  rs.close();
+		  /*rs.close();
 		  stmt.close();
-		  c.close();
+		  c.close();*/
 		  
 		} catch ( SQLException e ) {
 		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
@@ -59,11 +72,12 @@ public class SQLiteData
 	}
 	public void addBroadcaster(String username, String room, String help)
 	{
-		Connection c = null;
+		/*Connection c = null;
 		Statement stmt = null;
-		String sql = null;
+		String sql = null;*/
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
+		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
@@ -80,11 +94,12 @@ public class SQLiteData
 	
 	public void removeBroadcaster(String username)
 	{
-		Connection c = null;
+		/*Connection c = null;
 		Statement stmt = null;
-		String sql = null;
+		String sql = null;*/
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
+		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
@@ -100,12 +115,13 @@ public class SQLiteData
 	
 	public String grabAllBroadcasters()
 	{
-		Connection c = null;
+		/*Connection c = null;
 		Statement stmt = null;
-		String sql = null;
+		String sql = null;*/
 		String allBroadcasters = null;
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
+		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
@@ -131,12 +147,13 @@ public class SQLiteData
 	
 	public String grabSpecificBroadcasters(String course)
 	{
-		Connection c = null;
+		/*Connection c = null;
 		Statement stmt = null;
-		String sql = null;
+		String sql = null;*/
 		String courseBroadcasters = null;
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
+		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
@@ -164,11 +181,12 @@ public class SQLiteData
 	
 	public void addUser(String username, String courses, String current, String languages)
 	{
-		Connection c = null;
+		/*Connection c = null;
 		Statement stmt = null;
-		String sql = null;
+		String sql = null;*/
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
+		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
@@ -185,11 +203,12 @@ public class SQLiteData
 	
 	public void updateUserPreferences(String username, String courses, String current, String languages)
 	{
-		Connection c = null;
+		/*Connection c = null;
 		Statement stmt = null;
-		String sql = null;
+		String sql = null;*/
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
+		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
