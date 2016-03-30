@@ -74,76 +74,7 @@ public class HTTPHandler implements Runnable{
 
         return req;
     }
-
-
-    // Only handles input from the linux machines atm.
-    public void handlePUT(HTTPRequest req) {
-        log.fine(String.format("Received: %s %s %s\n", req.getMethod(), req.getUri(), req.getVersion()));
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            log.fine(req.getBody());
-            Map data = mapper.readValue(req.getBody(), Map.class);
-
-            String machinename = (String) data.get("name");
-            int occupied = (Boolean) data.get("occupied") ? 1 : 0;
-
-            //There is probably a better way to do this, but its fine for now.
-            String labroom = "";
-            if (machinename.contains("moore")) {
-                labroom = "LWSNB146";
-            } else if (machinename.contains("sslab")) {
-                labroom = "LWSNB158";
-            } else if (machinename.contains("pod")) {
-                labroom = "LWSNB148";
-            } else if (machinename.contains("borg")) {
-                labroom = "HAASG56";
-            } else if (machinename.contains("xinu")) {
-                labroom = "HAAS257";
-            }
-
-            sqlData.updateLabPC(labroom, machinename, occupied);
-
-            // 200 = Success, and since we are always successful we always success.
-            // In the future we can parse the body and validate it.
-            this.outToClient.write("HTTP/1.1 200");
-        } catch (IOException e) {
-            log.log(Level.WARNING, "Error while trying to map JSON from response", e);
-        }
-    }
-
-    public void handleGET(HTTPRequest req) {
-        System.out.format("Received: %s %s %s\n", req.getMethod(), req.getUri(), req.getVersion());
-
-        HTTPResponse response = new HTTPResponse();
-
-        response.setHeader("Access-Control-Allow-Origin", "*");
-
-        Map<String, Integer> labs = new HashMap<>();
-
-        labs.put("LWSNB160", sqlData.grabLab("LWSNB160"));
-        labs.put("LWSNB158", sqlData.grabLab("LWSNB158"));
-        labs.put("LWSNB148", sqlData.grabLab("LWSNB148"));
-        labs.put("LWSNB146", sqlData.grabLab("LWSNB146"));
-        labs.put("LWSNB131", sqlData.grabLab("LWSNB131"));
-        labs.put("HAASG56", sqlData.grabLab("HAASG56"));
-        labs.put("HAASG40", sqlData.grabLab("HAASG40"));
-        labs.put("HAAS257", sqlData.grabLab("HAAS257"));
-
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectWriter objWriter = mapper.writer().withDefaultPrettyPrinter();
-
-        try {
-            response.setBody(objWriter.writeValueAsString(labs));
-        } catch (JsonProcessingException e) {
-            log.log(Level.WARNING, "Error while building json response for labs", e);
-        }
-
-        try {
-            this.outToClient.write(response.getResponse());
-        } catch (IOException e) {
-            log.log(Level.WARNING, "Error while trying to write response", e);
-        }
-    }
+    
 
     public void run() {
         try {
@@ -152,26 +83,27 @@ public class HTTPHandler implements Runnable{
             while(((read = inFromClient.readLine()) != null) && !(read.equals(""))){
                 message += read + '\n';
             }
-			System.out.println("msg: "+message);
+
+            log.fine("msg: "+message);
             if (!message.contains("HTTP/1.1")) {
                 // Only Accept HTTP Requests
                 return;
             }
 
-            HTTPRequest req = handleHTTPRequest(message);
+            HTTPRequest request = handleHTTPRequest(message);
+            log.fine(String.format("Received: %s %s %s\n",
+                                    request.getMethod(), request.getUri(), request.getVersion()));
 
-            switch(req.getMethod()) {
-                case PUT:
-                    handlePUT(req);
-                    break;
-                case GET:
-                    handleGET(req);
-                    break;
-                default:
-                    log.log(Level.WARNING, "Received unsupported HTTP Request", req);
-                    this.outToClient.write("HTTP/1.1 500 Unsupported Request");
-                    break;
+            if (Server.getInstance().api.containsKey("status")) {
+                HTTPResponse response = Server.getInstance().api.get("status").run(request);
+                response.setHeader("Access-Control-Allow-Origin", "*");
+
+                this.outToClient.write(response.getResponse());
+            } else {
+                log.log(Level.WARNING, "Received unsupported HTTP Request", request);
+                this.outToClient.write("HTTP/1.1 500 Unsupported Request");
             }
+
         } catch(IOException e) {
             log.log(Level.WARNING, "Problem with TCP I/O", e);
         } finally {

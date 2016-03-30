@@ -33,6 +33,12 @@ public class HTTPResponse {
 
     public HTTPResponse() {}
 
+    public static HTTPResponse getError(int errorCode) {
+        HTTPResponse response = new HTTPResponse();
+        response.setStatus(errorCode);
+        return response;
+    }
+
     public String getStatusLine() {
         // Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
         return String.format("%s %s %s", version, status, statusCode.get(status));

@@ -188,7 +188,7 @@ public class SQLiteData
 		String sql = null;*/
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
-		  System.out.println("Opened database successfully");
+		  System.out.println("Opened databasfe successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
