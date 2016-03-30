@@ -44,7 +44,6 @@ public class SQLiteData
 		String sql = null;
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
-		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
@@ -65,7 +64,6 @@ public class SQLiteData
 		String sql = null;
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
-		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
@@ -87,7 +85,6 @@ public class SQLiteData
 		String sql = null;
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
-		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
@@ -109,7 +106,6 @@ public class SQLiteData
 		String allBroadcasters = null;
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
-		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
@@ -141,7 +137,6 @@ public class SQLiteData
 		String courseBroadcasters = null;
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
-		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
@@ -174,7 +169,6 @@ public class SQLiteData
 		String sql = null;
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
-		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
@@ -196,7 +190,6 @@ public class SQLiteData
 		String sql = null;
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
-		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
