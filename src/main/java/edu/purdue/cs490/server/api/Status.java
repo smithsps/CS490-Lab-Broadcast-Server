@@ -47,7 +47,7 @@ public class Status {
                     } else if (machine.contains("pod")) {
                         labroom = "LWSNB148";
                     } else if (machine.contains("borg")) {
-                        labroom = "HAASG56";
+                        labroom = "HAASG40";
                     } else if (machine.contains("xinu")) {
                         labroom = "HAAS257";
                     }
