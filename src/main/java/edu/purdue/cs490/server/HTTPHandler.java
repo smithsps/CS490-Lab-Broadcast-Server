@@ -84,7 +84,7 @@ public class HTTPHandler implements Runnable{
             Map data = mapper.readValue(req.getBody(), Map.class);
 
             String machinename = (String) data.get("name");
-            int occupied = (Integer) data.get("occupied");
+            int occupied = (Boolean) data.get("occupied") ? 1 : 0;
 
             //There is probably a better way to do this, but its fine for now.
             String labroom = "";
