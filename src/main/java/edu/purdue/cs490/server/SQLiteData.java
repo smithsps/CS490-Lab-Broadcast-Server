@@ -10,8 +10,6 @@ public class SQLiteData
 
   Connection c = null;
   Statement stmt = null;
-  String sql = null;
-    
   
   public SQLiteData(){
 	   try {
@@ -26,9 +24,6 @@ public class SQLiteData
   {
     int total = 0;
     try {
-      /*c = DriverManager.getConnection("jdbc:sqlite:test.db");
-      System.out.println("Opened database successfully");
-	  c.setAutoCommit(false);*/
 
       stmt = c.createStatement();
       ResultSet rs = stmt.executeQuery( "SELECT * FROM "+labroom+";" );
@@ -38,9 +33,6 @@ public class SQLiteData
          	total++;
          }
       }
-      /*rs.close();
-      stmt.close();
-      c.close();*/
 	  
     } catch ( SQLException e ) {
       log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
@@ -50,13 +42,8 @@ public class SQLiteData
   
 	public void updateLabPC(String labroom, String machine, int occupied)
 	{
-		/*Connection c = null;
-		Statement stmt = null;
-		String sql = null;*/
+
 		try {
-		  /*c = DriverManager.getConnection("jdbc:sqlite:test.db");
-		  System.out.println("Opened database successfully");
-		  c.setAutoCommit(false);*/
 
 		  machine = machine.toUpperCase();
 		  labroom = labroom.toUpperCase();
@@ -64,9 +51,6 @@ public class SQLiteData
 		  stmt = c.createStatement();
 		  stmt.executeUpdate(
 			"UPDATE "+labroom+" SET OCCUPIED = "+occupied+" WHERE MACHINE_NAME = '"+machine+"';");
-		  /*rs.close();
-		  stmt.close();
-		  c.close();*/
 		  
 		} catch ( SQLException e ) {
 		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
@@ -74,9 +58,7 @@ public class SQLiteData
 	}
 	public void addBroadcaster(String username, String room, String help)
 	{
-		/*Connection c = null;
-		Statement stmt = null;
-		String sql = null;*/
+
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
 		  System.out.println("Opened database successfully");
@@ -96,19 +78,14 @@ public class SQLiteData
 	
 	public void removeBroadcaster(String username)
 	{
-		/*Connection c = null;
-		Statement stmt = null;
-		String sql = null;*/
+
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
 		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
-		  ResultSet rs = stmt.executeQuery("DELETE FROM BROADCASTERS WHERE USERNAME = '"+username+"';");
-		  rs.close();
-		  stmt.close();
-		  c.close();
+		  stmt.executeQuery("DELETE FROM BROADCASTERS WHERE USERNAME = '"+username+"';");
 		  
 		} catch ( SQLException e ) {
 		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
@@ -117,9 +94,7 @@ public class SQLiteData
 	
 	public String grabAllBroadcasters()
 	{
-		/*Connection c = null;
-		Statement stmt = null;
-		String sql = null;*/
+
 		String allBroadcasters = null;
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
@@ -138,8 +113,6 @@ public class SQLiteData
 			 allBroadcasters += "\n";
 		  }
 		  rs.close();
-		  stmt.close();
-		  c.close();
 		  
 		} catch ( SQLException e ) {
 		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
@@ -149,9 +122,7 @@ public class SQLiteData
 	
 	public String grabSpecificBroadcasters(String course)
 	{
-		/*Connection c = null;
-		Statement stmt = null;
-		String sql = null;*/
+
 		String courseBroadcasters = null;
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
@@ -172,8 +143,6 @@ public class SQLiteData
 			 }
 		  }
 		  rs.close();
-		  stmt.close();
-		  c.close();
 		  
 		} catch ( SQLException e ) {
 		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
@@ -183,20 +152,15 @@ public class SQLiteData
 	
 	public void addUser(String username, String courses, String current, String languages)
 	{
-		/*Connection c = null;
-		Statement stmt = null;
-		String sql = null;*/
+
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
 		  System.out.println("Opened databasfe successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
-		  ResultSet rs = stmt.executeQuery("INSERT INTO USERS (USERNAME,COURSES,CURRENT,LANGUAGES)"+
+		  stmt.executeQuery("INSERT INTO USERS (USERNAME,COURSES,CURRENT,LANGUAGES)"+
 			"VALUES('"+username+"', '"+courses+"', '"+current+"', '"+languages+"');");
-		  rs.close();
-		  stmt.close();
-		  c.close();
 		  
 		} catch ( SQLException e ) {
 		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
@@ -205,21 +169,16 @@ public class SQLiteData
 	
 	public void updateUserPreferences(String username, String courses, String current, String languages)
 	{
-		/*Connection c = null;
-		Statement stmt = null;
-		String sql = null;*/
+
 		try {
 		  c = DriverManager.getConnection("jdbc:sqlite:test.db");
 		  System.out.println("Opened database successfully");
 		  c.setAutoCommit(false);
 
 		  stmt = c.createStatement();
-		  ResultSet rs = stmt.executeQuery(
-			"UPDATE USERS SET COURSES = '"+courses+"', CURRENT = '"+current+"', LANGUAGES = '"+languages+
-			"' WHERE USERNAME = '"+username+"';");
-		  rs.close();
-		  stmt.close();
-		  c.close();
+		  stmt.executeUpdate(
+			"UPDATE USERS SET COURSES = '"+courses+"', CURRENT = '"+current+
+					"', LANGUAGES = '"+languages+"' WHERE USERNAME = '"+username+"';");
 		  
 		} catch ( SQLException e ) {
 		  log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
