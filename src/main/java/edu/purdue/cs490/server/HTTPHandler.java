@@ -23,6 +23,7 @@ public class HTTPHandler implements Runnable{
     Socket clientSocket;
     BufferedWriter outToClient;
     BufferedReader inFromClient;
+    SQLiteData sqlData = new SQLiteData();
 
     private static final Logger log = Logger.getLogger(HTTPHandler.class.getName());
 
@@ -73,6 +74,8 @@ public class HTTPHandler implements Runnable{
         return req;
     }
 
+
+    // Only handles input from the linux machines atm.
     public void handlePUT(HTTPRequest req) {
         System.out.format("Received: %s %s %s\n", req.getMethod(), req.getUri(), req.getVersion());
         ObjectMapper mapper = new ObjectMapper();
@@ -80,8 +83,24 @@ public class HTTPHandler implements Runnable{
             System.out.println(req.getBody());
             Map data = mapper.readValue(req.getBody(), Map.class);
 
-            // Replace with SQL Insert
-            // Server.getInstance().occupied.put((String) data.get("name"), (Boolean) data.get("occupied"));
+            String machinename = (String) data.get("name");
+            int occupied = (Integer) data.get("occupied");
+
+            //There is probably a better way to do this, but its fine for now.
+            String labroom = "";
+            if (machinename.contains("moore")) {
+                labroom = "LWSNB146";
+            } else if (machinename.contains("sslab")) {
+                labroom = "LWSNB158";
+            } else if (machinename.contains("pod")) {
+                labroom = "LWSNB148";
+            } else if (machinename.contains("borg")) {
+                labroom = "HAASG56";
+            } else if (machinename.contains("xinu")) {
+                labroom = "HAAS257";
+            }
+
+            sqlData.updateLabPC(labroom, machinename, occupied);
 
             // 200 = Success, and since we are always successful we always success.
             // In the future we can parse the body and validate it.
@@ -98,18 +117,16 @@ public class HTTPHandler implements Runnable{
 
         response.setHeader("Access-Control-Allow-Origin", "*");
 
-        SQLiteData reqLab = new SQLiteData();
-
         Map<String, Integer> labs = new HashMap<>();
 
-        labs.put("LWSNB160", reqLab.grabLab("LWSNB160"));
-        labs.put("LWSNB158", reqLab.grabLab("LWSNB158"));
-        labs.put("LWSNB148", reqLab.grabLab("LWSNB148"));
-        labs.put("LWSNB146", reqLab.grabLab("LWSNB146"));
-        labs.put("LWSNB131", reqLab.grabLab("LWSNB131"));
-        labs.put("HAASG56", reqLab.grabLab("HAASG56"));
-        labs.put("HAASG40", reqLab.grabLab("HAASG40"));
-        labs.put("HAAS257", reqLab.grabLab("HAAS257"));
+        labs.put("LWSNB160", sqlData.grabLab("LWSNB160"));
+        labs.put("LWSNB158", sqlData.grabLab("LWSNB158"));
+        labs.put("LWSNB148", sqlData.grabLab("LWSNB148"));
+        labs.put("LWSNB146", sqlData.grabLab("LWSNB146"));
+        labs.put("LWSNB131", sqlData.grabLab("LWSNB131"));
+        labs.put("HAASG56", sqlData.grabLab("HAASG56"));
+        labs.put("HAASG40", sqlData.grabLab("HAASG40"));
+        labs.put("HAAS257", sqlData.grabLab("HAAS257"));
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter objWriter = mapper.writer().withDefaultPrettyPrinter();
