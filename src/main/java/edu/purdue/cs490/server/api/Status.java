@@ -26,10 +26,37 @@ public class Status {
 
 
         switch (request.getMethod()) {
-            case HEAD:
-                break;
-            case POST:
-                break;
+            case GET:
+                Map<String, Integer> labs = new HashMap<>();
+
+                labs.put("LWSNB160", sqlData.grabLab("LWSNB160"));
+                labs.put("LWSNB158", sqlData.grabLab("LWSNB158"));
+                labs.put("LWSNB148", sqlData.grabLab("LWSNB148"));
+                labs.put("LWSNB146", sqlData.grabLab("LWSNB146"));
+                labs.put("LWSNB131", sqlData.grabLab("LWSNB131"));
+                labs.put("HAASG56", sqlData.grabLab("HAASG56"));
+                labs.put("HAASG40", sqlData.grabLab("HAASG40"));
+                labs.put("HAAS257", sqlData.grabLab("HAAS257"));
+
+                ObjectWriter objWriter = mapper.writer().withDefaultPrettyPrinter();
+
+                try {
+                    response.setBody(objWriter.writeValueAsString(labs));
+                    response.setStatus(200);
+                } catch (JsonProcessingException e) {
+                    log.log(Level.WARNING, "Error while building json response for labs", e);
+                    return HTTPResponse.getError(500);
+                }
+                return response;
+        }
+        return HTTPResponse.getError(500);
+    }
+
+    public static HTTPResponse handleUpdateLinux(HTTPRequest request) {
+        HTTPResponse response = new HTTPResponse();
+        ObjectMapper mapper = new ObjectMapper();
+
+        switch (request.getMethod()) {
             case PUT:
                 try {
                     log.fine(request.getBody());
@@ -61,28 +88,6 @@ public class Status {
                     log.log(Level.WARNING, "Error while trying to map JSON from response", e);
                 }
                 return response;
-
-            case GET:
-                Map<String, Integer> labs = new HashMap<>();
-
-                labs.put("LWSNB160", sqlData.grabLab("LWSNB160"));
-                labs.put("LWSNB158", sqlData.grabLab("LWSNB158"));
-                labs.put("LWSNB148", sqlData.grabLab("LWSNB148"));
-                labs.put("LWSNB146", sqlData.grabLab("LWSNB146"));
-                labs.put("LWSNB131", sqlData.grabLab("LWSNB131"));
-                labs.put("HAASG56", sqlData.grabLab("HAASG56"));
-                labs.put("HAASG40", sqlData.grabLab("HAASG40"));
-                labs.put("HAAS257", sqlData.grabLab("HAAS257"));
-
-                ObjectWriter objWriter = mapper.writer().withDefaultPrettyPrinter();
-
-                try {
-                    response.setBody(objWriter.writeValueAsString(labs));
-                } catch (JsonProcessingException e) {
-                    log.log(Level.WARNING, "Error while building json response for labs", e);
-                }
-                return response;
-
         }
         return HTTPResponse.getError(500);
     }

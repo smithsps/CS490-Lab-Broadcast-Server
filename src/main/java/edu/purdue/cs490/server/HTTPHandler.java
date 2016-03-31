@@ -5,18 +5,12 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import edu.purdue.cs490.server.data.HTTPRequest;
 import edu.purdue.cs490.server.data.HTTPResponse;
-
 
 
 public class HTTPHandler implements Runnable{
@@ -74,7 +68,6 @@ public class HTTPHandler implements Runnable{
 
         return req;
     }
-    
 
     public void run() {
         try {
@@ -91,17 +84,16 @@ public class HTTPHandler implements Runnable{
             }
 
             HTTPRequest request = handleHTTPRequest(message);
-            log.fine(String.format("Received: %s %s %s\n",
-                                    request.getMethod(), request.getUri(), request.getVersion()));
+            log.fine(String.format("Received: %s %s %s\n", request.getMethod(), request.getUri(), request.getVersion()));
 
-            if (Server.getInstance().api.containsKey("status")) {
-                HTTPResponse response = Server.getInstance().api.get("status").run(request);
+            if (Server.getInstance().api.containsKey(request.getUri())) {
+                HTTPResponse response = Server.getInstance().api.get(request.getUri()).run(request);
                 response.setHeader("Access-Control-Allow-Origin", "*");
 
                 this.outToClient.write(response.getResponse());
             } else {
                 log.log(Level.WARNING, "Received unsupported HTTP Request", request);
-                this.outToClient.write("HTTP/1.1 500 Unsupported Request");
+                this.outToClient.write(HTTPResponse.getError(404).getResponse());
             }
 
         } catch(IOException e) {

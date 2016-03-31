@@ -110,7 +110,7 @@ def send_data(data):
         if args.debug:
             print("MAC Generated: {}".format(mac.hexdigest()))
 
-        conn.request("PUT", "/linux", body=request_data, headers={"Auth": mac.hexdigest()})
+        conn.request("PUT", "/status/update/linux", body=request_data, headers={"Auth": mac.hexdigest()})
        
         return conn.getresponse().status
     except Exception as e:

@@ -54,7 +54,7 @@ public class Server {
     public void apiPaths() {
         api.put("/", Status::handleStatus);
         api.put("/status", Status::handleStatus);
-        api.put("/status/update/linux", Status::handleStatus);
+        api.put("/status/update/linux", Status::handleUpdateLinux);
     }
 
     public SQLiteData getSQLData() {

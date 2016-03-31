@@ -7,28 +7,28 @@ public class HTTPResponse {
 
     final String version = "HTTP/1.1";
 
-    Integer status;
+    Integer status = 500;
     HashMap<String, String> headers = new HashMap<>(8);
-    String body;
+    String body = "";
 
-    public static Map<Integer, String> statusCode;
+    public static Map<Integer, String> statusDescription;
 
     static {
-        statusCode = new HashMap<>(10);
+        statusDescription = new HashMap<>(10);
 
         // None Conclusive List
-        statusCode.put(200, "OK");
-        statusCode.put(201, "Created");
-        statusCode.put(202, "Accepted");
+        statusDescription.put(200, "OK");
+        statusDescription.put(201, "Created");
+        statusDescription.put(202, "Accepted");
 
-        statusCode.put(400, "Bad Request");
-        statusCode.put(401, "Unauthorized");
-        statusCode.put(403, "Forbidden");
-        statusCode.put(404, "Not Found");
-        statusCode.put(411, "Length Required");
+        statusDescription.put(400, "Bad Request");
+        statusDescription.put(401, "Unauthorized");
+        statusDescription.put(403, "Forbidden");
+        statusDescription.put(404, "Not Found");
+        statusDescription.put(411, "Length Required");
 
-        statusCode.put(500, "Internal Server Error");
-        statusCode.put(501, "Not Implemented");
+        statusDescription.put(500, "Internal Server Error");
+        statusDescription.put(501, "Not Implemented");
     }
 
     public HTTPResponse() {}
@@ -41,7 +41,7 @@ public class HTTPResponse {
 
     public String getStatusLine() {
         // Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
-        return String.format("%s %s %s", version, status, statusCode.get(status));
+        return String.format("%s %s %s", version, getStatus(), getStatusMessage(getStatus()));
     }
 
     public String getResponse() {
@@ -65,8 +65,15 @@ public class HTTPResponse {
         this.status = status;
     }
 
-    public Integer getStatus() {
+    public int getStatus() {
         return status;
+    }
+
+    private String getStatusMessage(int status) {
+        if (statusDescription.containsKey(getStatus())) {
+            return statusDescription.get(getStatus());
+        }
+        return "Internal Server Error";
     }
 
     public void setHeader(String key, String value) {
