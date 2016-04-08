@@ -18,8 +18,7 @@ public class SQLiteData
 
 	private static final Logger log = Logger.getLogger(SQLiteData.class.getName());
 
-	Connection c = null;
-	Statement stmt = null;
+	Connection c;
 
 	public SQLiteData(){
 		try {
@@ -34,18 +33,15 @@ public class SQLiteData
 	{
 		int total = 0;
 		try {
-
-			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery( "SELECT * FROM "+labroom+";" );
-			while ( rs.next() ) {
-				int cnt  = rs.getInt("OCCUPIED");
-				if(cnt == 1){
-					total++;
-				}
-			}
+			// Somewhat susceptible to SQL Injection as
+			// prepared statement can't be used on this, as a table name is appended.
+			Statement stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM " + labroom +  " WHERE OCCUPIED = 1");
+			total = rs.getInt(1);
+			rs.close();
 
 		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
+			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
 		return total;
 	}
@@ -54,64 +50,54 @@ public class SQLiteData
 	{
 
 		try {
-
 			machine = machine.toUpperCase();
 			labroom = labroom.toUpperCase();
 
-			stmt = c.createStatement();
-			stmt.executeUpdate(
-					"UPDATE "+labroom+" SET OCCUPIED = "+occupied+" WHERE MACHINE_NAME = '"+machine+"';");
+			// Somewhat susceptible to SQL Injection as
+			// prepared statement can't be used on this, as a table name is appended.
+			PreparedStatement pstmt = c.prepareStatement("UPDATE " + labroom + " SET OCCUPIED = ? WHERE MACHINE_NAME = ?;");
+			pstmt.setInt(1, occupied);
+			pstmt.setString(2, machine);
+
+			pstmt.executeUpdate();
 
 		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
+			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
 	}
+
 	public void addBroadcaster(String username, String room, String help)
 	{
-
 		try {
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
-			System.out.println("Opened database successfully");
-			c.setAutoCommit(false);
+			PreparedStatement pstmt = c.prepareStatement("INSERT INTO BROADCASTER (USERNAME,ROOM,HELP) VALUES (?, ?, ?);");
+			pstmt.setString(1, username);
+			pstmt.setString(2, room);
+			pstmt.setString(3, help);
 
-			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("INSERT INTO BROADCASTER (USERNAME,ROOM,HELP)"+
-					"VALUES('"+username+"', '"+room+"', '"+help+"');");
-			rs.close();
-			stmt.close();
-			c.close();
-
+			pstmt.executeUpdate();
 		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
+			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
 	}
 
 	public void removeBroadcaster(String username)
 	{
-
 		try {
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
-			System.out.println("Opened database successfully");
-			c.setAutoCommit(false);
+			PreparedStatement pstmt = c.prepareStatement("DELETE FROM BROADCASTERS WHERE USERNAME = ?;");
+			pstmt.setString(1, username);
 
-			stmt = c.createStatement();
-			stmt.executeQuery("DELETE FROM BROADCASTERS WHERE USERNAME = '"+username+"';");
-
+			pstmt.executeUpdate();
 		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
+			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
 	}
 
+	//Perhaps have this return a Map or something? No need to return a formatted string.
 	public String grabAllBroadcasters()
 	{
-
 		String allBroadcasters = null;
 		try {
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
-			System.out.println("Opened database successfully");
-			c.setAutoCommit(false);
-
-			stmt = c.createStatement();
+			Statement stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM BROADCASTERS;");
 
 			while ( rs.next() ) {
@@ -125,21 +111,17 @@ public class SQLiteData
 			rs.close();
 
 		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
+			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
 		return allBroadcasters;
 	}
 
+	//Can't we query this, rather than filter a query of everything?
 	public String grabSpecificBroadcasters(String course)
 	{
-
 		String courseBroadcasters = null;
 		try {
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
-			System.out.println("Opened database successfully");
-			c.setAutoCommit(false);
-
-			stmt = c.createStatement();
+			Statement stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM BROADCASTERS;");
 
 			while ( rs.next() ) {
@@ -155,43 +137,40 @@ public class SQLiteData
 			rs.close();
 
 		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
+			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
 		return courseBroadcasters;
 	}
 
 	public void addUser(String username, String courses, String current, String languages)
 	{
-
 		try {
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
-			System.out.println("Opened databasfe successfully");
-			c.setAutoCommit(false);
+			PreparedStatement pstmt = c.prepareStatement("INSERT INTO USERS (USERNAME,COURSES,CURRENT,LANGUAGES)"+
+														 "VALUES(?, ?, ?, ?);");
+			pstmt.setString(1, username);
+			pstmt.setString(2, courses);
+			pstmt.setString(3, current);
+			pstmt.setString(4, languages);
 
-			stmt = c.createStatement();
-			stmt.executeQuery("INSERT INTO USERS (USERNAME,COURSES,CURRENT,LANGUAGES)"+
-					"VALUES('"+username+"', '"+courses+"', '"+current+"', '"+languages+"');");
-
+			pstmt.executeUpdate();
 		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
+			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
 	}
 
 	public void updateUserPreferences(String username, String courses, String current, String languages)
 	{
-
 		try {
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
-			System.out.println("Opened database successfully");
-			c.setAutoCommit(false);
+			PreparedStatement pstmt = c.prepareStatement("UPDATE USERS SET COURSES = ?, CURRENT = ?, " +
+																		  "LANGUAGES = ? WHERE USERNAME = ?;");
+			pstmt.setString(1, courses);
+			pstmt.setString(2, current);
+			pstmt.setString(3, languages);
+			pstmt.setString(4, username);
 
-			stmt = c.createStatement();
-			stmt.executeUpdate(
-					"UPDATE USERS SET COURSES = '"+courses+"', CURRENT = '"+current+
-							"', LANGUAGES = '"+languages+"' WHERE USERNAME = '"+username+"';");
-
+			pstmt.executeUpdate();
 		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
+			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
 	}
 }
