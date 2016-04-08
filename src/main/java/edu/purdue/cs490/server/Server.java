@@ -10,10 +10,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.KeyStoreException;
 import java.security.KeyManagementException;
 import java.security.UnrecoverableKeyException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,6 +62,13 @@ public class Server {
 
         apiPaths();
 
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run(){
+                onShutdown();
+            }
+        });
+
         log.log(Level.INFO, "Server started at " + serverSocket.getLocalSocketAddress());
     }
 
@@ -67,6 +76,10 @@ public class Server {
         return Server.instance;
     }
 
+    /**
+     * Loads keystore.jks for cert and creates a SSL context for later ServerSocket
+     * Grabs keystore filename and password from config.
+     */
     private void sslInitialization(){
         FileInputStream fileKeystore;
         KeyStore keyStore;
@@ -100,6 +113,9 @@ public class Server {
         }
     }
 
+    /**
+     * Mapping of string paths to handling functions, resolved in HTTPHandler
+     */
     public void apiPaths() {
         api.put("/", Status::handleStatus);
         api.put("/status", Status::handleStatus);
@@ -110,8 +126,11 @@ public class Server {
         return sqlData;
     }
 
+    /**
+     * Start two threads that accept sockets, one for plaintext, one for SSL
+     */
     public void serverLoop() {
-        //HTTP Accept
+        // HTTP Accept
         executor.execute(() -> {
             while(true) {
                 try {
@@ -124,7 +143,7 @@ public class Server {
             }
         });
 
-        //HTTPS Accept
+        // HTTPS Accept
         executor.execute(() -> {
             while(true) {
                 try {
@@ -136,6 +155,33 @@ public class Server {
                 }
             }
         });
+    }
+
+    /**
+     * Triggered to run on server shutdown.
+     * Used to correctly shutdown our threads and database
+     *
+     * Threads shutdown in two stages:
+     *   shutdown() - Stop receiving tasks i.e. execute(incomingConnection)
+     *   shutdownNow() - Stop any tasks continuing after 5 seconds.
+     */
+    private void onShutdown() {
+        log.info("Exiting server.. stopping in five seconds.");
+        executor.shutdown();
+        try {
+            if (executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+
+        try {
+            sqlData.c.close();
+        } catch (SQLException e) {
+            log.warning("Trouble to close sqlite db at shutdown.");
+        }
     }
 
     public static void main(String[] args) {
