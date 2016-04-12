@@ -21,7 +21,7 @@ public class Config {
         defaults.setProperty("DatabaseFile", "lab-broadcast.sqlite3");
 
         defaults.setProperty("Keystore", "keystore.jks");
-        defaults.setProperty("KeystorePassword", "");
+        //defaults.setProperty("KeystorePassword", "");
 
         defaults.setProperty("WorkerPoolSize", "60");
     }
@@ -34,6 +34,7 @@ public class Config {
         } catch (Exception ex) {
             log.log(Level.WARNING, "No config file found, proceeding with defaults.");
         }
+        required();
         validate();
     }
 
@@ -64,6 +65,13 @@ public class Config {
         } catch (NumberFormatException ex){
             log.warning("WorkerPoolSize property invalid, defaulting..");
             properties.remove("WorkerPoolSize");
+        }
+    }
+
+    private void required() {
+        if (!properties.containsKey("KeystorePassword")) {
+            log.severe("KeystorePassword is required in config.properties");
+            System.exit(0);
         }
     }
 }
