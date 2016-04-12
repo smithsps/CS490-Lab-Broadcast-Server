@@ -22,7 +22,7 @@ public class SQLiteData
 
 	public SQLiteData(){
 		try {
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
+			c = DriverManager.getConnection("jdbc:sqlite:" + Server.getInstance().config.get("DatabaseFile"));
 			c.setAutoCommit(false);
 		}catch( SQLException e ) {
 			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );

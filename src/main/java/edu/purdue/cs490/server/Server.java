@@ -32,6 +32,7 @@ public class Server {
     ServerSocket serverSocket;
     ServerSocket serverSSLSocket;
     SQLiteData sqlData;
+    Config config;
 
     SSLContext sslContext;
 
@@ -45,19 +46,23 @@ public class Server {
         }
         Server.instance = this;
 
+        config = new Config("config.properties");
+        int plainPort = Integer.parseInt(config.get("PlainPort"));
+        int sslPort = Integer.parseInt(config.get("SSLPort"));
+        int workerPoolSize = Integer.parseInt(config.get("WorkerPoolSize"));
+
+        executor = Executors.newFixedThreadPool(workerPoolSize);
         sslInitialization();
 
-        executor = Executors.newFixedThreadPool(60);
         try {
-            serverSocket = new ServerSocket(5000);
-            serverSSLSocket = sslContext.getServerSocketFactory().createServerSocket(5001);
+            serverSocket = new ServerSocket(plainPort);
+            serverSSLSocket = sslContext.getServerSocketFactory().createServerSocket(sslPort);
         } catch(IOException e){
             log.log(Level.SEVERE, "Unable to create server socket.", e);
             System.exit(0);
         }
 
         SQLiteJDBC sqlcreate = new SQLiteJDBC();
-        sqlcreate.createSQLdatabase();
         sqlData = new SQLiteData();
 
         apiPaths();
@@ -69,7 +74,7 @@ public class Server {
             }
         });
 
-        log.log(Level.INFO, "Server started at " + serverSocket.getLocalSocketAddress());
+        log.log(Level.INFO, "Server started on ports: " + plainPort + " and " + sslPort);
     }
 
     public static Server getInstance() {
@@ -79,6 +84,9 @@ public class Server {
     /**
      * Loads keystore.jks for cert and creates a SSL context for later ServerSocket
      * Grabs keystore filename and password from config.
+     *
+     * For generating jks:
+     * keytool -genkey -keyalg RSA -keystore keystore.jks -validity 360 -keysize 2048
      */
     private void sslInitialization(){
         FileInputStream fileKeystore;
@@ -93,12 +101,12 @@ public class Server {
         }
 
         try {
-            fileKeystore = new FileInputStream("keystore.jks");
+            fileKeystore = new FileInputStream(config.get("Keystore"));
             keyStore = KeyStore.getInstance("JKS");
 
             keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
-            keyStore.load(fileKeystore, "cs490dev".toCharArray());
-            keyManagerFactory.init(keyStore, "cs490dev".toCharArray());
+            keyStore.load(fileKeystore, config.get("KeystorePassword").toCharArray());
+            keyManagerFactory.init(keyStore, config.get("KeystorePassword").toCharArray());
 
             sslContext.init(keyManagerFactory.getKeyManagers(), null, null); //Null defaults
         } catch (FileNotFoundException e) {
@@ -108,7 +116,7 @@ public class Server {
             log.severe("Unable to access key in keystore. Exiting..");
             System.exit(0);
         } catch (Exception e) {
-            log.severe("Unhandled exception during SSL Init.");
+            log.log(Level.SEVERE, "Unhandled exception during SSL Init.", e);
             System.exit(0);
         }
     }
@@ -130,7 +138,7 @@ public class Server {
      * Start two threads that accept sockets, one for plaintext, one for SSL
      */
     public void serverLoop() {
-        // HTTP Accept
+        // HTTP
         executor.execute(() -> {
             while(true) {
                 try {
@@ -143,7 +151,7 @@ public class Server {
             }
         });
 
-        // HTTPS Accept
+        // HTTPS
         executor.execute(() -> {
             while(true) {
                 try {
@@ -180,7 +188,7 @@ public class Server {
         try {
             sqlData.c.close();
         } catch (SQLException e) {
-            log.warning("Trouble to close sqlite db at shutdown.");
+            log.warning("Trouble closing sqlite db at shutdown.");
         }
     }
 
