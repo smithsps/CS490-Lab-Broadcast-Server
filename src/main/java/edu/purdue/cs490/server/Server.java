@@ -171,13 +171,13 @@ public class Server {
      *
      * Threads shutdown in two stages:
      *   shutdown() - Stop receiving tasks i.e. execute(incomingConnection)
-     *   shutdownNow() - Stop any tasks continuing after 5 seconds.
+     *   shutdownNow() - Stop any tasks continuing after 2 seconds.
      */
     private void onShutdown() {
-        log.info("Exiting server.. stopping in five seconds.");
+        log.info("Exiting server.. stopping in two seconds.");
         executor.shutdown();
         try {
-            if (executor.awaitTermination(5, TimeUnit.SECONDS)) {
+            if (executor.awaitTermination(2, TimeUnit.SECONDS)) {
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {
