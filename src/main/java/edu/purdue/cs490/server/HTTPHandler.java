@@ -13,17 +13,20 @@ import edu.purdue.cs490.server.data.HTTPRequest;
 import edu.purdue.cs490.server.data.HTTPResponse;
 
 
+
 public class HTTPHandler implements Runnable{
     Socket clientSocket;
     BufferedWriter outToClient;
     BufferedReader inFromClient;
     SQLiteData sqlData;
+    Boolean ssl;
 
     private static final Logger log = Logger.getLogger(HTTPHandler.class.getName());
 
-    public HTTPHandler(Socket client) {
+    public HTTPHandler(Socket client, Boolean ssl) {
         this.clientSocket = client;
-        sqlData = Server.getInstance().sqlData;
+        this.ssl = ssl;
+        this.sqlData = Server.getInstance().sqlData;
 
         try {
             this.inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -73,11 +76,11 @@ public class HTTPHandler implements Runnable{
         try {
             String message = "";
             String read;
-            while(((read = inFromClient.readLine()) != null) && !(read.equals(""))){
+            while (((read = inFromClient.readLine()) != null) && !(read.equals(""))) {
                 message += read + '\n';
             }
 
-            log.fine("msg: "+message);
+            log.fine("msg: " + message);
             if (!message.contains("HTTP/1.1")) {
                 // Only Accept HTTP Requests
                 return;
@@ -92,12 +95,11 @@ public class HTTPHandler implements Runnable{
 
                 this.outToClient.write(response.getResponse());
             } else {
-                log.log(Level.WARNING, "Received unsupported HTTP Request", request);
+                log.log(Level.WARNING, "Received unsupported HTTP Request: " + request.getUri());
                 this.outToClient.write(HTTPResponse.getError(404).getResponse());
             }
-
         } catch(IOException e) {
-            log.log(Level.WARNING, "Problem with TCP I/O", e);
+            log.log(Level.WARNING, "Problem with Socket Communication", e);
         } finally {
             try {
                 this.outToClient.close();
@@ -106,5 +108,9 @@ public class HTTPHandler implements Runnable{
                 log.log(Level.WARNING, "Trouble trying to close socket.", e);
             }
         }
+    }
+
+    public Boolean isSSL() {
+        return ssl;
     }
 }

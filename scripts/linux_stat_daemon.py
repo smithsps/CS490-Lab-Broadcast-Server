@@ -8,7 +8,7 @@ __author__ = "Simon Smith"
 __credits__ = "Daniel Trinkle"
 
 import argparse
-from hashlib import sha1
+from hashlib import sha384
 import hmac
 import http.client
 import json
@@ -105,7 +105,7 @@ def send_data(data):
         conn = http.client.HTTPConnection(args.url, args.port, timeout=5)
 
         request_data = json.dumps(data) + '\r\n'
-        mac = hmac.new(str.encode(auth_key), str.encode(request_data), sha1)
+        mac = hmac.new(str.encode(auth_key), str.encode(request_data), sha384)
 
         if args.debug:
             print("MAC Generated: {}".format(mac.hexdigest()))
@@ -163,8 +163,7 @@ while True:
     stats = get_computer_stats()
     send_data(stats)
 
-    # Interval if argument, otherwise run every 5 minutes on the clock
     if args.interval > 0:
         time.sleep(args.interval)
     else:
-        time.sleep(300 - time.time() % 300)
+        time.sleep(300)

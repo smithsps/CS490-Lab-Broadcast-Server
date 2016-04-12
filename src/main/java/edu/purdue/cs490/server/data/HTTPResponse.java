@@ -26,6 +26,7 @@ public class HTTPResponse {
         statusDescription.put(403, "Forbidden");
         statusDescription.put(404, "Not Found");
         statusDescription.put(411, "Length Required");
+        statusDescription.put(497, "HTTP Request Sent to HTTPS Port");
 
         statusDescription.put(500, "Internal Server Error");
         statusDescription.put(501, "Not Implemented");
@@ -36,6 +37,7 @@ public class HTTPResponse {
     public static HTTPResponse getError(int errorCode) {
         HTTPResponse response = new HTTPResponse();
         response.setStatus(errorCode);
+        response.setBody(errorCode + " " + response.getStatusMessage(errorCode));
         return response;
     }
 

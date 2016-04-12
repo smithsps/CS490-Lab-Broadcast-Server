@@ -1,5 +1,6 @@
 package edu.purdue.cs490.server;
 
+import java.io.File;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +16,8 @@ public class SQLiteJDBC
           log.log(Level.SEVERE, "Could not load JDBC Driver.", e);
           System.exit(0);
       }
+
+      createSQLdatabase();
   }
 
   public void createSQLdatabase()
@@ -23,10 +26,13 @@ public class SQLiteJDBC
     Statement stmt;
     String sql;
 
-      //
+    // If db already exists don't attempt to recreate. Somewhat redundant as first statement fails anyways.
+    if (new File(Server.getInstance().config.get("DatabaseFile")).isFile()) {
+        return;
+    }
+
     try {
-      c = DriverManager.getConnection("jdbc:sqlite:test.db");
-      System.out.println("Opened database successfully");
+      c = DriverManager.getConnection("jdbc:sqlite:" + Server.getInstance().config.get("DatabaseFile"));
 	  c.setAutoCommit(false);
 
 ///////////////////////////////CREATE///////////////////////////////////////
