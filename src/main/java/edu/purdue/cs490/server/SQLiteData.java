@@ -28,7 +28,6 @@ public class SQLiteData
 	public SQLiteData(){
 		try {
 			c = DriverManager.getConnection("jdbc:sqlite:" + Server.getInstance().config.get("DatabaseFile"));
-			c.setAutoCommit(false);
 		}catch( SQLException e ) {
 			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
 		}
@@ -65,6 +64,7 @@ public class SQLiteData
 			pstmt.setString(2, machine);
 
 			pstmt.executeUpdate();
+			pstmt.close();
 
 		} catch ( SQLException e ) {
 			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
@@ -80,6 +80,7 @@ public class SQLiteData
 			pstmt.setString(3, help);
 
 			pstmt.executeUpdate();
+			pstmt.close();
 		} catch ( SQLException e ) {
 			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
@@ -92,6 +93,7 @@ public class SQLiteData
 			pstmt.setString(1, username);
 
 			pstmt.executeUpdate();
+			pstmt.close();
 		} catch ( SQLException e ) {
 			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
@@ -148,7 +150,7 @@ public class SQLiteData
 	}
 
 	/**
-	 * I think this is best deprecated, maybe this can add to a different table?
+	 * I think this is best deprecated, maybe this can add to a different way?
 	 * @param username
 	 * @param courses
 	 * @param current
@@ -165,6 +167,7 @@ public class SQLiteData
 			pstmt.setString(4, languages);
 
 			pstmt.executeUpdate();
+			pstmt.close();
 		} catch ( SQLException e ) {
 			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
@@ -181,6 +184,7 @@ public class SQLiteData
 			pstmt.setString(4, username);
 
 			pstmt.executeUpdate();
+			pstmt.close();
 		} catch ( SQLException e ) {
 			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
@@ -208,6 +212,7 @@ public class SQLiteData
 		pstmt.setString(3, verifyCode);
 
 		pstmt.executeUpdate();
+		pstmt.close();
 	}
 
 	/**
@@ -227,6 +232,9 @@ public class SQLiteData
 		account.active = r.getBoolean(3);
 		account.verifyCode = r.getString(4);
 
+		r.close();
+		pstmt.close();
+
 		return account;
 	}
 
@@ -242,6 +250,7 @@ public class SQLiteData
 		pstmt.setString(2, username);
 
 		pstmt.executeUpdate();
+		pstmt.close();
 	}
 }
 
