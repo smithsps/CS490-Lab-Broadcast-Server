@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 import edu.purdue.cs490.server.api.ApiRunnable;
 import edu.purdue.cs490.server.api.Status;
+import edu.purdue.cs490.server.api.user.Login;
 import edu.purdue.cs490.server.api.user.Registration;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -131,6 +132,7 @@ public class Server {
         api.put("/status/update/linux", Status::handleUpdateLinux);
 
         api.put("/user/registration", Registration::handleRegistration);
+        api.put("/user/login", Login::handleLogin);
     }
 
     public SQLiteData getSQLData() {

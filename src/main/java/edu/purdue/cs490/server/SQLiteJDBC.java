@@ -116,6 +116,13 @@ public class SQLiteJDBC
                 " verify    TEXT    NOT NULL)";
       stmt.executeUpdate(sql);
 
+      stmt = c.createStatement();
+      sql = "CREATE TABLE SESSIONS " +
+                "(username  TEXT    PRIMARY KEY     NOT NULL," +
+                " token     TEXT    NOT NULL," +
+                " creation  INT     NOT NULL";
+      stmt.executeUpdate(sql);
+
       stmt.close();
       //c.close();
 

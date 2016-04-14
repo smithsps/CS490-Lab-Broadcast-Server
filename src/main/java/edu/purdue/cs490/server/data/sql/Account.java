@@ -6,7 +6,7 @@ package edu.purdue.cs490.server.data.sql;
  */
 public class Account{
     public String username;
-    public String password;
+    public String passwordHash;
     public Boolean active;
     public String verifyCode;
 }

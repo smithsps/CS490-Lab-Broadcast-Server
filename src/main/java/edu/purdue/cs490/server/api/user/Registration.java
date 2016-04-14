@@ -58,18 +58,18 @@ public class Registration {
                             case SQLITE_CONSTRAINT:
                                 log.fine(username + " was attempted to be registered but is already in use.");
                                 response.setStatus(403);
-                                response.setJsonMessage("error", "Username is already registered.");
+                                response.setSimpleJsonMessage("error", "Username is already registered.");
                                 return response;
                             default:
                                 log.log(Level.WARNING, "Exception while trying to register user.", ex);
                                 response.setStatus(500);
-                                response.setJsonMessage("error", "There was an unknown exception processing your registration request.");
+                                response.setSimpleJsonMessage("error", "There was an unknown exception processing your registration request.");
                                 return response;
                         }
                     }
 
                     response.setStatus(200);
-                    response.setJsonMessage("success", "Account was successfully created, a verification code would be sent to " +
+                    response.setSimpleJsonMessage("success", "Account was successfully created, a verification code would be sent to " +
                                                        "registered account email. ");
                     return response;
                 } catch (IOException e) {

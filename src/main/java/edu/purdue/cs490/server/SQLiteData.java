@@ -5,6 +5,7 @@ import java.sql.*;
 import edu.purdue.cs490.server.data.sql.Account;
 import org.sqlite.SQLiteErrorCode;
 
+import java.time.LocalTime;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -228,7 +229,7 @@ public class SQLiteData
 		ResultSet r = pstmt.executeQuery();
 		Account account = new Account();
 		account.username = r.getString(1);
-		account.password = r.getString(2);
+		account.passwordHash = r.getString(2);
 		account.active = r.getBoolean(3);
 		account.verifyCode = r.getString(4);
 
@@ -244,13 +245,46 @@ public class SQLiteData
 	 * @param active Account Verified
 	 * @throws SQLException
      */
-	public void setAccountActive(String username, Boolean active) throws  SQLException {
-		PreparedStatement pstmt = c.prepareStatement("UPDATE account SET active = ? WHERE username = ?");
+	public void setAccountActive(String username, Boolean active) throws SQLException {
+		PreparedStatement pstmt = c.prepareStatement("UPDATE accounts SET active = ? WHERE username = ?");
 		pstmt.setInt(1, (active) ? 1 : 0);
 		pstmt.setString(2, username);
 
 		pstmt.executeUpdate();
 		pstmt.close();
+	}
+
+	/**
+	 * Sets and replaces session token for user. Used on login.
+	 * @param username
+	 * @param token session token, randomly generated.
+	 * @throws SQLException
+     */
+	public void createSession(String username, String token) throws SQLException{
+		PreparedStatement pstmt = c.prepareStatement("INSERT OR REPLACE sessions (username, token, creation)" +
+													 "VALUES (?,?,?)");
+		pstmt.setString(1, username);
+		pstmt.setString(2, token);
+		pstmt.setTime(3, Time.valueOf(LocalTime.now()));
+
+		pstmt.executeUpdate();
+		pstmt.close();
+	}
+
+	/**
+	 * Retrieves user login session
+	 * @param username
+	 * @return session token
+	 * @throws SQLException
+     */
+	public String getSession(String username) throws SQLException {
+		PreparedStatement pstmt = c.prepareStatement("SELECT token FROM sessions WHERE username = ?");
+		pstmt.setString(1, username);
+
+		ResultSet rs = pstmt.executeQuery();
+		pstmt.close();
+
+		return rs.getString(1);
 	}
 }
 

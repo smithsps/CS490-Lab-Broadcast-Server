@@ -38,7 +38,7 @@ public class HTTPResponse {
     public static HTTPResponse getHTTPError(int errorCode) {
         HTTPResponse response = new HTTPResponse();
         response.setStatus(errorCode);
-        response.setJsonMessage("error", errorCode + " " + response.getStatusMessage(errorCode));
+        response.setSimpleJsonMessage("error", errorCode + " " + response.getStatusMessage(errorCode));
         return response;
     }
 
@@ -64,7 +64,7 @@ public class HTTPResponse {
         return res.toString();
     }
 
-    public void setJsonMessage(String key, String value) {
+    public void setSimpleJsonMessage(String key, String value) {
         setBody(String.format("{\"%s\": \"%s\"}", key, value));
     }
 
