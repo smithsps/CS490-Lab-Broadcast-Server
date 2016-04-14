@@ -8,6 +8,7 @@ public class HTTPRequest {
     String uri, version;
     HashMap<String, String> headers = new HashMap<String, String>(8);
     String body;
+    Boolean ssl;
 
     public HTTPRequest() {}
 
@@ -54,4 +55,13 @@ public class HTTPRequest {
     public String getBody() {
         return body;
     }
+
+    public void setSSL(Boolean ssl) {
+        this.ssl = ssl;
+    }
+
+    public Boolean isSSL() {
+        return ssl;
+    }
+
 }

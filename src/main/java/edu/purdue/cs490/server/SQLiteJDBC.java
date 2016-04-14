@@ -111,12 +111,6 @@ public class SQLiteJDBC
       stmt = c.createStatement();
       sql = "CREATE TABLE ACCOUNTS " +
                 "(username  TEXT    PRIMARY KEY     NOT NULL," +
-                " password  TEXT    NOT NULL)";
-      stmt.executeUpdate(sql);
-
-      stmt = c.createStatement();
-      sql = "CREATE TABLE ACCOUNTS " +
-                "(username  TEXT    PRIMARY KEY     NOT NULL," +
                 " password  TEXT    NOT NULL," +
                 " active    INT     NOT NULL," +
                 " verify    TEXT    NOT NULL)";

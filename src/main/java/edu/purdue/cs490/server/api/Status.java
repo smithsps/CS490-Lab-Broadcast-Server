@@ -48,8 +48,9 @@ public class Status {
                     return HTTPResponse.getHTTPError(500);
                 }
                 return response;
+            default:
+                return HTTPResponse.getHTTPError(405);
         }
-        return HTTPResponse.getHTTPError(500);
     }
 
     public static HTTPResponse handleUpdateLinux(HTTPRequest request) {
@@ -58,6 +59,7 @@ public class Status {
 
         switch (request.getMethod()) {
             case PUT:
+            case POST:
                 try {
                     log.fine(request.getBody());
                     Map data = mapper.readValue(request.getBody(), Map.class);
@@ -88,7 +90,8 @@ public class Status {
                     log.log(Level.WARNING, "Error while trying to map JSON from response", e);
                 }
                 return response;
+            default:
+                return HTTPResponse.getHTTPError(405);
         }
-        return HTTPResponse.getHTTPError(500);
     }
 }

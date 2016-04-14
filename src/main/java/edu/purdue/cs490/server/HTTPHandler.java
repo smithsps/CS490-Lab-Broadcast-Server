@@ -51,6 +51,7 @@ public class HTTPHandler implements Runnable{
         req.setMethod(tokRequestLine[0]);
         req.setUri(tokRequestLine[1]);
         req.setVersion(tokRequestLine[2]);
+        req.setSSL(isSSL());
 
         for (int i = 1; i < tokRequest.length; i++) {
             String[] tokHeader = tokRequest[i].split(": ");
@@ -92,6 +93,7 @@ public class HTTPHandler implements Runnable{
             if (Server.getInstance().api.containsKey(request.getUri())) {
                 HTTPResponse response = Server.getInstance().api.get(request.getUri()).run(request);
                 response.setHeader("Access-Control-Allow-Origin", "*");
+                response.setHeader("Content-Type" , "application/json");
 
                 this.outToClient.write(response.getResponse());
             } else {

@@ -14,9 +14,9 @@ public class HTTPResponse {
     public static Map<Integer, String> statusDescription;
 
     static {
-        statusDescription = new HashMap<>(10);
+        statusDescription = new HashMap<>(15);
 
-        // None Conclusive List
+        // None Conclusive List (Maybe better as enum?)
         statusDescription.put(200, "OK");
         statusDescription.put(201, "Created");
         statusDescription.put(202, "Accepted");
@@ -25,8 +25,9 @@ public class HTTPResponse {
         statusDescription.put(401, "Unauthorized");
         statusDescription.put(403, "Forbidden");
         statusDescription.put(404, "Not Found");
+        statusDescription.put(405, "Method Not Allowed");
         statusDescription.put(411, "Length Required");
-        statusDescription.put(497, "HTTP Request Sent to HTTPS Port");
+        statusDescription.put(497, "HTTP Request Sent to HTTPS Resource");
 
         statusDescription.put(500, "Internal Server Error");
         statusDescription.put(501, "Not Implemented");
@@ -37,7 +38,7 @@ public class HTTPResponse {
     public static HTTPResponse getHTTPError(int errorCode) {
         HTTPResponse response = new HTTPResponse();
         response.setStatus(errorCode);
-        response.setBody(errorCode + " " + response.getStatusMessage(errorCode));
+        response.setJsonMessage("error", errorCode + " " + response.getStatusMessage(errorCode));
         return response;
     }
 
@@ -61,6 +62,10 @@ public class HTTPResponse {
         res.append(getBody());
 
         return res.toString();
+    }
+
+    public void setJsonMessage(String key, String value) {
+        setBody(String.format("{\"%s\": \"%s\"}", key, value));
     }
 
     public void setStatus(Integer status) {
@@ -88,6 +93,7 @@ public class HTTPResponse {
 
     public void setBody(String body) {
         this.body = body;
+        setHeader("Content-Length", String.valueOf(body.length()));
     }
 
     public String getBody() {
