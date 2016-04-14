@@ -34,7 +34,7 @@ public class HTTPResponse {
 
     public HTTPResponse() {}
 
-    public static HTTPResponse getError(int errorCode) {
+    public static HTTPResponse getHTTPError(int errorCode) {
         HTTPResponse response = new HTTPResponse();
         response.setStatus(errorCode);
         response.setBody(errorCode + " " + response.getStatusMessage(errorCode));

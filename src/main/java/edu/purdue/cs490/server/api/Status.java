@@ -45,11 +45,11 @@ public class Status {
                     response.setStatus(200);
                 } catch (JsonProcessingException e) {
                     log.log(Level.WARNING, "Error while building json response for labs", e);
-                    return HTTPResponse.getError(500);
+                    return HTTPResponse.getHTTPError(500);
                 }
                 return response;
         }
-        return HTTPResponse.getError(500);
+        return HTTPResponse.getHTTPError(500);
     }
 
     public static HTTPResponse handleUpdateLinux(HTTPRequest request) {
@@ -89,6 +89,6 @@ public class Status {
                 }
                 return response;
         }
-        return HTTPResponse.getError(500);
+        return HTTPResponse.getHTTPError(500);
     }
 }

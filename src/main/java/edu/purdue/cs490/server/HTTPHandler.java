@@ -96,7 +96,7 @@ public class HTTPHandler implements Runnable{
                 this.outToClient.write(response.getResponse());
             } else {
                 log.log(Level.WARNING, "Received unsupported HTTP Request: " + request.getUri());
-                this.outToClient.write(HTTPResponse.getError(404).getResponse());
+                this.outToClient.write(HTTPResponse.getHTTPError(404).getResponse());
             }
         } catch(IOException e) {
             log.log(Level.WARNING, "Problem with Socket Communication", e);
