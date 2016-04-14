@@ -261,7 +261,7 @@ public class SQLiteData
 	 * @throws SQLException
      */
 	public void createSession(String username, String token) throws SQLException{
-		PreparedStatement pstmt = c.prepareStatement("INSERT OR REPLACE sessions (username, token, creation)" +
+		PreparedStatement pstmt = c.prepareStatement("INSERT OR REPLACE INTO sessions (username, token, creation)" +
 													 "VALUES (?,?,?)");
 		pstmt.setString(1, username);
 		pstmt.setString(2, token);

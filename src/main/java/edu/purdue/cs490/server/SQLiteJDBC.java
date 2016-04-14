@@ -120,7 +120,7 @@ public class SQLiteJDBC
       sql = "CREATE TABLE SESSIONS " +
                 "(username  TEXT    PRIMARY KEY     NOT NULL," +
                 " token     TEXT    NOT NULL," +
-                " creation  INT     NOT NULL";
+                " creation  INT     NOT NULL)";
       stmt.executeUpdate(sql);
 
       stmt.close();

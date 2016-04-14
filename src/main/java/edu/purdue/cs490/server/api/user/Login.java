@@ -64,6 +64,7 @@ public class Login {
                     try {
                         sqlData.createSession(username, session);
                     } catch (SQLException e) {
+                        log.log(Level.WARNING, "Error while trying to create session for user upon login.", e);
                         response.setStatus(500);
                         response.setSimpleJsonMessage("error", "Login successful, but was unable to create session.");
                         return response;
