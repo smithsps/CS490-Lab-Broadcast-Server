@@ -54,7 +54,6 @@ public class Registration {
                     try {
                         sqlData.createAccount(username, hashedPassword, verify);
                     } catch (SQLException ex) {
-                        System.out.println(ex.getErrorCode());
                         switch (SQLiteErrorCode.getErrorCode(ex.getErrorCode())) {
                             case SQLITE_CONSTRAINT:
                                 log.fine(username + " was attempted to be registered but is already in use.");
@@ -64,7 +63,7 @@ public class Registration {
                             default:
                                 log.log(Level.WARNING, "Exception while trying to register user.", ex);
                                 response.setStatus(500);
-                                response.setJsonMessage("error", "There was an unknown exception processing your request.");
+                                response.setJsonMessage("error", "There was an unknown exception processing your registration request.");
                                 return response;
                         }
                     }
