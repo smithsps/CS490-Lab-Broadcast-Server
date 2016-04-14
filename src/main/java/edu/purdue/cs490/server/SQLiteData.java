@@ -1,6 +1,11 @@
 package edu.purdue.cs490.server;
 
 import java.sql.*;
+
+import edu.purdue.cs490.server.data.sql.Account;
+import org.sqlite.SQLiteErrorCode;
+
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -142,6 +147,13 @@ public class SQLiteData
 		return courseBroadcasters;
 	}
 
+	/**
+	 * I think this is best deprecated, maybe this can add to a different table?
+	 * @param username
+	 * @param courses
+	 * @param current
+	 * @param languages
+     */
 	public void addUser(String username, String courses, String current, String languages)
 	{
 		try {
@@ -172,6 +184,64 @@ public class SQLiteData
 		} catch ( SQLException e ) {
 			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
+	}
+
+	/**
+	 * Attempts to add an account.
+	 * @param username purdue username
+	 * @param passwordHash bcrypt hash, includes salt.
+	 * @throws SQLException
+	 *
+	 * At the moment this fails if there is an existing account with the same name
+	 * But what if there is an existing account that is not active/verified?
+	 * What should the proper process be?
+	 *
+	 * Also this bypasses the current user system for logins atm.
+	 * Best to decide how to deal with this with David.
+     */
+	public void createAccount(String username, String passwordHash, String verifyCode) throws SQLException {
+		//Should abort on already existing username.
+		PreparedStatement pstmt = c.prepareStatement("INSERT INTO accounts (username, password, active, verify) " +
+													 "VALUES(?,?,0,?)");
+		pstmt.setString(1, username);
+		pstmt.setString(2, passwordHash);
+		pstmt.setString(3, verifyCode);
+
+		pstmt.executeUpdate();
+	}
+
+	/**
+	 * Retrieves entire account: username, password
+	 * @param username purdue username
+	 * @return Account data class
+	 * @throws SQLException
+     */
+	public Account getAccount(String username) throws SQLException {
+		PreparedStatement pstmt = c.prepareStatement("SELECT username, password, active, verify FROM accounts WHERE username = ?");
+		pstmt.setString(1, username);
+
+		ResultSet r = pstmt.executeQuery();
+		Account account = new Account();
+		account.username = r.getString(1);
+		account.password = r.getString(2);
+		account.active = r.getBoolean(3);
+		account.verifyCode = r.getString(4);
+
+		return account;
+	}
+
+	/**
+	 * Sets if the the account is verified.
+	 * @param username
+	 * @param active Account Verified
+	 * @throws SQLException
+     */
+	public void setAccountActive(String username, Boolean active) throws  SQLException {
+		PreparedStatement pstmt = c.prepareStatement("UPDATE account SET active = ? WHERE username = ?");
+		pstmt.setInt(1, (active) ? 1 : 0);
+		pstmt.setString(2, username);
+
+		pstmt.executeUpdate();
 	}
 }
 

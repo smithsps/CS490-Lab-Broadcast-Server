@@ -1,6 +1,7 @@
 *.class
 *.jks
 *.db
+*sqlite3
 *.properties
 
 # Mobile Tools for Java (J2ME)

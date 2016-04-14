@@ -27,6 +27,7 @@ public class SQLiteJDBC
     String sql;
 
     // If db already exists don't attempt to recreate. Somewhat redundant as first statement fails anyways.
+    // Maybe have CREATE TABLE IF NOT EXIST instead.
     if (new File(Server.getInstance().config.get("DatabaseFile")).isFile()) {
         return;
     }
@@ -106,7 +107,21 @@ public class SQLiteJDBC
                    "(MACHINE_NAME   TEXT    NOT NULL, " + 
                    " OCCUPIED       INT     NOT NULL)"; 
       stmt.executeUpdate(sql);
-      
+
+      stmt = c.createStatement();
+      sql = "CREATE TABLE ACCOUNTS " +
+                "(username  TEXT    PRIMARY KEY     NOT NULL," +
+                " password  TEXT    NOT NULL)";
+      stmt.executeUpdate(sql);
+
+      stmt = c.createStatement();
+      sql = "CREATE TABLE ACCOUNTS " +
+                "(username  TEXT    PRIMARY KEY     NOT NULL," +
+                " password  TEXT    NOT NULL," +
+                " active    INT     NOT NULL," +
+                " verify    TEXT    NOT NULL)";
+      stmt.executeUpdate(sql);
+
       stmt.close();
       //c.close();
 
@@ -212,6 +227,9 @@ public class SQLiteJDBC
 		stmt.executeUpdate(sql);
 	  }
 	  
+
+
+
 
       stmt.close();
       c.commit();
