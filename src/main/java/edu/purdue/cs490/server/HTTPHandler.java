@@ -93,7 +93,9 @@ public class HTTPHandler implements Runnable{
             if (Server.getInstance().api.containsKey(request.getUri())) {
                 HTTPResponse response = Server.getInstance().api.get(request.getUri()).run(request);
                 response.setHeader("Access-Control-Allow-Origin", "*");
-                response.setHeader("Content-Type" , "application/json");
+                if (response.getHeader("Content-Type") == null) {
+                    response.setHeader("Content-Type", "application/json");
+                }
 
                 this.outToClient.write(response.getResponse());
             } else {

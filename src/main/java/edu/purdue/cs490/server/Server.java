@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 import edu.purdue.cs490.server.api.ApiRunnable;
 import edu.purdue.cs490.server.api.Status;
+import edu.purdue.cs490.server.api.user.Index;
 import edu.purdue.cs490.server.api.user.Login;
 import edu.purdue.cs490.server.api.user.Registration;
 
@@ -127,7 +128,8 @@ public class Server {
      * Mapping of string paths to handling functions, resolved in HTTPHandler
      */
     public void apiPaths() {
-        api.put("/", Status::handleStatus);
+        api.put("/", Index::handleIndex);
+
         api.put("/status", Status::handleStatus);
         api.put("/status/update/linux", Status::handleUpdateLinux);
 
