@@ -13,7 +13,18 @@ public class Index {
     private static final Logger log = Logger.getLogger(Registration.class.getName());
     private static SQLiteData sqlData = Server.getInstance().getSQLData();
 
-    static String html = "<!doctype html>\n";
+    static String html = "<!doctype html>\n" +
+            "<html>\n" +
+            "<head>\n" +
+            "    <title>Lab Broadcast API Documentation</title>\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "   <h2>Lab Broadcast API Documentation</h2>\n" +
+            "   <p>Last Updated: April 17, 2016</p>\n" +
+            "   <p><a href=\"https://github.com/smithsps/CS490-Lab-Broadcast-Server\">Github Project</a></p>\n" +
+            "   \n" +
+            "</body>\n" +
+            "</html>";
 
     public static HTTPResponse handleIndex(HTTPRequest request) {
         HTTPResponse response = new HTTPResponse();
