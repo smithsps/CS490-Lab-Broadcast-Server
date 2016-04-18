@@ -35,7 +35,9 @@ public class Server {
     ServerSocket serverSocket;
     ServerSocket serverSSLSocket;
     SQLiteData sqlData;
+    Mailer mailer;
     Config config;
+
 
     SSLContext sslContext;
 
@@ -67,6 +69,8 @@ public class Server {
 
         SQLiteJDBC sqlcreate = new SQLiteJDBC();
         sqlData = new SQLiteData();
+
+        mailer = new Mailer();
 
         apiPaths();
 
@@ -139,6 +143,10 @@ public class Server {
 
     public SQLiteData getSQLData() {
         return sqlData;
+    }
+
+    public Mailer getMailer() {
+        return mailer;
     }
 
     /**

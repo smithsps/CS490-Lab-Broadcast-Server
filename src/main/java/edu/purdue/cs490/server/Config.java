@@ -7,7 +7,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Config {
+public class Config extends Properties{
     private static final Logger log = Logger.getLogger(Server.class.getName());
 
     static Properties defaults;
@@ -24,6 +24,14 @@ public class Config {
         //defaults.setProperty("KeystorePassword", "");
 
         defaults.setProperty("WorkerPoolSize", "60");
+
+        defaults.put("mail.transport.protocol", "smtp");
+        defaults.put("mail.smtp.auth", "true");
+        defaults.put("mail.smtp.starttls.enable", "true");
+        defaults.put("mail.smtp.host", "smtp.purdue.edu");
+        defaults.put("mail.smtp.port", "587");
+        //defaults.put("mail.smtp.username", "");
+        //defaults.put("mail.smtp.password", "");
     }
 
     public Config (String filename) {
@@ -39,6 +47,11 @@ public class Config {
     }
 
     public String get(String key) {
+        return properties.getProperty(key);
+    }
+
+    @Override
+    public String getProperty(String key) {
         return properties.getProperty(key);
     }
 
@@ -71,6 +84,14 @@ public class Config {
     private void required() {
         if (!properties.containsKey("KeystorePassword")) {
             log.severe("KeystorePassword is required in config.properties");
+            System.exit(0);
+        }
+        if (!properties.containsKey("mail.smtp.username")) {
+            log.severe("mail.smtp.username is required in config.properties");
+            System.exit(0);
+        }
+        if (!properties.containsKey("mail.smtp.password")) {
+            log.severe("mail.smtp.password is required in config.properties");
             System.exit(0);
         }
     }

@@ -68,6 +68,12 @@ public class Registration {
                         }
                     }
 
+                    // Attempt to send email to user;
+                    if (!Server.getInstance().getMailer().registration(username, verify)) {
+                        log.warning("Unable to send email to " + username + "@purdue.edu");
+                    }
+
+
                     response.setStatus(200);
                     response.setSimpleJsonMessage("success", "Account was successfully created, a verification code would be sent to " +
                                                        "registered account email. ");
