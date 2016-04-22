@@ -52,6 +52,13 @@ public class Login {
                         return response;
                     }
 
+                    if (!account.active) {
+                        log.fine("Attempted login into account, " + username + " but was not verified.");
+                        response.setStatus(403);
+                        response.setSimpleJsonMessage("error", "This username has not been verified.");
+                        return response;
+                    }
+
                     if (BCrypt.checkpw(password, account.passwordHash) && username.equals(account.username)) {
                         session = UUID.randomUUID().toString().replace("-", "");
                     } else {

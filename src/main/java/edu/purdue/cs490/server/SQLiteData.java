@@ -245,10 +245,11 @@ public class SQLiteData
 	 * @param active Account Verified
 	 * @throws SQLException
      */
-	public void setAccountActive(String username, Boolean active) throws SQLException {
-		PreparedStatement pstmt = c.prepareStatement("UPDATE accounts SET active = ? WHERE username = ?");
+	public void setAccountActive(String username, String verifyCode, Boolean active) throws SQLException {
+		PreparedStatement pstmt = c.prepareStatement("UPDATE accounts SET active = ? WHERE username = ? AND verify = ?");
 		pstmt.setInt(1, (active) ? 1 : 0);
 		pstmt.setString(2, username);
+		pstmt.setString(3, verifyCode);
 
 		pstmt.executeUpdate();
 		pstmt.close();

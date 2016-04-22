@@ -140,7 +140,7 @@ public class Server {
 
         api.put("/user/registration", Registration::handleRegistration);
         api.put("/user/login", Login::handleLogin);
-        api.put("/user/verify/(?<username>\\w+)", Verify::handleVerify);
+        api.put("/user/verify/(?<username>\\w*)", Verify::handleVerify);
     }
 
     public SQLiteData getSQLData() {

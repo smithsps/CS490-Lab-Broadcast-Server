@@ -5,6 +5,7 @@ import edu.purdue.cs490.server.SQLiteData;
 import edu.purdue.cs490.server.Server;
 import edu.purdue.cs490.server.data.HTTPRequest;
 import edu.purdue.cs490.server.data.HTTPResponse;
+import edu.purdue.cs490.server.data.sql.Account;
 import org.mindrot.jbcrypt.BCrypt;
 import org.sqlite.SQLiteErrorCode;
 
@@ -30,17 +31,39 @@ public class Verify {
         HTTPResponse response = new HTTPResponse();
         ObjectMapper mapper = new ObjectMapper();
 
-        String code = request.getUri().split("/")[3];
 
-        System.out.println("Recieved: " + code);
 
         switch (request.getMethod()) {
-            case PUT:
             case POST:
                 try {
-                    log.fine(request.getBody());
+                    log.finer(request.getBody());
                     Map data = mapper.readValue(request.getBody(), Map.class);
+                    String verifyCode = (String) data.get("verify");
 
+                    // Grab username param from url or json body.
+                    String username;
+                    try {
+                        username = request.getUri().split("/")[3];
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        username = (String) data.get("username");
+                    }
+
+                    try {
+                        Account account = sqlData.getAccount(username);
+
+                        if (!account.verifyCode.equals(verifyCode)) {
+                            response.setStatus(403);
+                            response.setSimpleJsonMessage("success", "Incorrect verification code.");
+                            return response;
+                        }
+
+                        sqlData.setAccountActive(username, verifyCode, true);
+                    } catch (SQLException ex) {
+                        log.log(Level.WARNING, "Unexpected exception while trying to verify user.", ex);
+                        response.setStatus(500);
+                        response.setSimpleJsonMessage("error", "There was an unknown exception processing your verification request.");
+                        return response;
+                    }
 
                     response.setStatus(200);
                     response.setSimpleJsonMessage("success", "Account was successfully verified!");
