@@ -24,6 +24,7 @@ import edu.purdue.cs490.server.api.Status;
 import edu.purdue.cs490.server.api.user.Index;
 import edu.purdue.cs490.server.api.user.Login;
 import edu.purdue.cs490.server.api.user.Registration;
+import edu.purdue.cs490.server.api.user.Verify;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -129,7 +130,7 @@ public class Server {
     }
 
     /**
-     * Mapping of string paths to handling functions, resolved in HTTPHandler
+     * Mapping of regex paths to handling functions, resolved in HTTPHandler
      */
     public void apiPaths() {
         api.put("/", Index::handleIndex);
@@ -139,6 +140,7 @@ public class Server {
 
         api.put("/user/registration", Registration::handleRegistration);
         api.put("/user/login", Login::handleLogin);
+        api.put("/user/verify/(?<username>\\w+)", Verify::handleVerify);
     }
 
     public SQLiteData getSQLData() {

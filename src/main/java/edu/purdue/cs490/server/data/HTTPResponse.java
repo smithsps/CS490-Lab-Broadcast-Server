@@ -33,7 +33,11 @@ public class HTTPResponse {
         statusDescription.put(501, "Not Implemented");
     }
 
-    public HTTPResponse() {}
+    public HTTPResponse() {
+        // Default Headers
+        setHeader("Access-Control-Allow-Origin", "*");
+        setHeader("Content-Type", "application/json");
+    }
 
     public static HTTPResponse getHTTPError(int errorCode) {
         HTTPResponse response = new HTTPResponse();

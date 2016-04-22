@@ -6,8 +6,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import edu.purdue.cs490.server.data.HTTPRequest;
 import edu.purdue.cs490.server.data.HTTPResponse;
@@ -90,13 +93,14 @@ public class HTTPHandler implements Runnable{
             HTTPRequest request = handleHTTPRequest(message);
             log.fine(String.format("Received: %s %s %s\n", request.getMethod(), request.getUri(), request.getVersion()));
 
-            if (Server.getInstance().api.containsKey(request.getUri())) {
-                HTTPResponse response = Server.getInstance().api.get(request.getUri()).run(request);
-                response.setHeader("Access-Control-Allow-Origin", "*");
-                if (response.getHeader("Content-Type") == null) {
-                    response.setHeader("Content-Type", "application/json");
-                }
 
+            // Match request uri to a defined path in apiPaths().
+            Optional<String> apiPath = Server.getInstance().api.keySet().stream()
+                                                                        .filter(p -> request.getUri().matches(p))
+                                                                        .findFirst();
+
+            if (apiPath.isPresent()) {
+                HTTPResponse response = Server.getInstance().api.get(apiPath.get()).run(request);
                 this.outToClient.write(response.getResponse());
             } else {
                 log.log(Level.WARNING, "Received unsupported HTTP Request: " + request.getUri());

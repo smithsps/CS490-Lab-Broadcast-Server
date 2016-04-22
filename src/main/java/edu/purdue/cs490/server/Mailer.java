@@ -3,14 +3,12 @@ package edu.purdue.cs490.server;
 
 import edu.purdue.cs490.server.api.user.Registration;
 
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.swing.plaf.synth.SynthTextAreaUI;
 
 public class Mailer {
     private static final Logger log = Logger.getLogger(Registration.class.getName());
