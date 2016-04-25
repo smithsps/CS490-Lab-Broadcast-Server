@@ -45,7 +45,7 @@ public class Broadcaster {
                         System.out.println(ex.getErrorCode());
                         log.log(Level.WARNING, "Exception while trying to get broadcaster.");
                         response.setStatus(500);
-                        response.setSimpleJsonMessage("error", "The username and password you entered did not match our records.");
+                        response.setSimpleJsonMessage("error", "Did not match our records.");
                         return response;
                     }*/
 					
@@ -74,7 +74,7 @@ public class Broadcaster {
                         System.out.println(ex.getErrorCode());
                         log.log(Level.WARNING, "Exception while trying to get broadcaster.");
                         response.setStatus(500);
-                        response.setSimpleJsonMessage("error", "The username and password you entered did not match our records.");
+                        response.setSimpleJsonMessage("error", "Did not match our records.");
                         return response;
                     }*/
 					response.setStatus(200);
@@ -85,7 +85,30 @@ public class Broadcaster {
                     log.log(Level.WARNING, "Error while trying to read JSON from response", e);
                     return HTTPResponse.getHTTPError(400);
                 }
+			case DELETE:
+				 try {
+                    log.fine(request.getBody());
+                    Map data = mapper.readValue(request.getBody(), Map.class);
+					
+					String username = (String) data.get("username");
+					
+					//try {
+                        sqlData.removeBroadcaster(username);
+                   /*}catch (SQLException ex) {
+                        System.out.println(ex.getErrorCode());
+                        log.log(Level.WARNING, "Exception while trying to get broadcaster.");
+                        response.setStatus(500);
+                        response.setSimpleJsonMessage("error", "Did not match our records.");
+                        return response;
+                    }*/
+					response.setStatus(200);
+					response.setSimpleJsonMessage("success", "Deleted user to broadcasters table");
 
+					return response;
+				} catch (IOException e) {
+                    log.log(Level.WARNING, "Error while trying to read JSON from response", e);
+                    return HTTPResponse.getHTTPError(400);
+                }
             default:
                 return HTTPResponse.getHTTPError(405);
         }
