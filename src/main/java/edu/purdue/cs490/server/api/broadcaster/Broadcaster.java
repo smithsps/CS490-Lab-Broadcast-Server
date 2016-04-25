@@ -37,10 +37,10 @@ public class Broadcaster {
                     log.fine(request.getBody());
                     Map data = mapper.readValue(request.getBody(), Map.class);
 					
-					
+					String help = (String) data.get("help");
 					
 					//try {
-						broadcasters = sqlData.grabAllBroadcasters();
+						broadcasters = sqlData.grabSpecificBroadcasters(help);
                     /*} catch (SQLException ex) {
                         System.out.println(ex.getErrorCode());
                         log.log(Level.WARNING, "Exception while trying to get broadcaster.");
