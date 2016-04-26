@@ -38,6 +38,7 @@ public class Broadcaster {
                     Map data = mapper.readValue(request.getBody(), Map.class);
 					
 					String help = (String) data.get("help");
+                    String session = (String) data.get("session");
 					
 					//try {
 						broadcasters = sqlData.grabSpecificBroadcasters(help);
