@@ -7,7 +7,7 @@ public class HTTPRequest {
     HTTPMethod method;
     String uri, version;
     HashMap<String, String> headers = new HashMap<String, String>(8);
-    String body;
+    String body = "";
     Boolean ssl;
 
     public HTTPRequest() {}
