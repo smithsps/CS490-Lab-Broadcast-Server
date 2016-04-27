@@ -84,7 +84,7 @@ public class HTTPHandler implements Runnable{
                 message += read + '\n';
             }
 
-            log.fine("msg: " + message);
+            log.finest("msg: " + message);
             if (!message.contains("HTTP/1.1")) {
                 // Only Accept HTTP Requests
                 return;
@@ -102,6 +102,7 @@ public class HTTPHandler implements Runnable{
 
             if (apiPath.isPresent()) {
                 HTTPResponse response = Server.getInstance().api.get(apiPath.get()).run(request);
+                System.out.println(response.getResponse());
                 this.outToClient.write(response.getResponse());
             } else {
                 log.log(Level.WARNING, "Received unsupported HTTP Request: " + request.getUri());

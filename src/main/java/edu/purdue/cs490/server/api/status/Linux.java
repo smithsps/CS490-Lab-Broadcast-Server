@@ -27,24 +27,27 @@ public class Linux {
                     log.fine(request.getBody());
                     Map data = mapper.readValue(request.getBody(), Map.class);
 
-                    String machine = (String) data.get("name");
-                    int occupied = (Boolean) data.get("occupied") ? 1 : 0;
+                    String name = (String) data.get("name");
+                    Boolean occupied = (Boolean) data.get("occupied");
+                    long update_time = (long) data.get("time");
+                    int uptime = (int) data.get("uptime");
 
                     //There is probably a better way to do this, but its fine for now.
                     String labroom = "";
-                    if (machine.contains("moore")) {
+                    if (name.contains("moore")) {
                         labroom = "LWSNB146";
-                    } else if (machine.contains("sslab")) {
+                    } else if (name.contains("sslab")) {
                         labroom = "LWSNB158";
-                    } else if (machine.contains("pod")) {
+                    } else if (name.contains("pod")) {
                         labroom = "LWSNB148";
-                    } else if (machine.contains("borg")) {
+                    } else if (name.contains("borg")) {
                         labroom = "HAASG40";
-                    } else if (machine.contains("xinu")) {
+                    } else if (name.contains("xinu")) {
                         labroom = "HAAS257";
                     }
 
-                    sqlData.updateLabPC(labroom, machine, occupied);
+                    sqlData.updateLinux(name, labroom, "", update_time, uptime, occupied);
+                    sqlData.updateLabPC(labroom, name, occupied ? 1 : 0);
 
                     // 200 = Success, and since we are always successful we always success.
                     // In the future we can parse the body and validate it.

@@ -72,6 +72,31 @@ public class SQLiteData
 		}
 	}
 
+	public void updateLinux(String name, String lab, String current_user, long update_time, int uptime, Boolean occupied)
+	{
+		try {
+			name = name.toLowerCase();
+			lab = lab.toLowerCase();
+			current_user = current_user.toLowerCase();
+
+
+			PreparedStatement pstmt = c.prepareStatement("INSERT INTO LINUX (name, lab, user, occupied, update_time, uptime) " +
+																			"VALUES(?, ?, ?, ?, ?, ?)");
+			pstmt.setString(1, name);
+			pstmt.setString(2, lab);
+			pstmt.setString(3, current_user);
+			pstmt.setBoolean(4, occupied);
+			pstmt.setDate(5, new Date(update_time));
+			pstmt.setInt(6, uptime);
+
+			pstmt.executeUpdate();
+			pstmt.close();
+
+		} catch ( SQLException e ) {
+			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
+		}
+	}
+
 	public void addBroadcaster(String username, String room, String help)
 	{
 		try {

@@ -126,7 +126,8 @@ public class SQLiteJDBC
       stmt = c.createStatement();
       sql = "CREATE TABLE LINUX" +
                 "(name          TEXT   PRIMARY KEY     NOT NULL," +
-                " username      INT    NOT NULL," +
+                " lab           TEXT   NOT NULL," +
+                " user          INT    NOT NULL," +
                 " occupied      INT    NOT NULL," +
                 " update_time   INT    NOT NULL," +
                 " uptime        INT    NOT NULL)";
@@ -141,7 +142,7 @@ public class SQLiteJDBC
 
       stmt = c.createStatement();
       sql = "CREATE TABLE HISTORY" +
-                "(name          TEXT   PRIMARY KEY     NOT NULL," +
+                "(name          TEXT   NOT NULL," +
                 " occupied      INT    NOT NULL," +
                 " time          INT    NOT NULL)";
       stmt.executeUpdate(sql);

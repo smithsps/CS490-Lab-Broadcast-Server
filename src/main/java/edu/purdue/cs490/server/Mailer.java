@@ -62,7 +62,7 @@ public class Mailer {
         System.out.println(body);
         try {
             message.setFrom(new InternetAddress(username + "@purdue.edu"));
-            message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress("bshrawde@purdue.edu"));
 
             message.setSubject(subject);
             message.setText(body);
