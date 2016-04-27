@@ -3,12 +3,15 @@ package edu.purdue.cs490.server;
 import java.sql.*;
 
 import edu.purdue.cs490.server.data.sql.Account;
+import edu.purdue.cs490.server.data.sql.Broadcaster;
+import edu.purdue.cs490.server.data.sql.User;
 import org.sqlite.SQLiteErrorCode;
 
 import java.time.LocalTime;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.ArrayList;
 
 public class SQLiteData
 {
@@ -21,6 +24,7 @@ public class SQLiteData
 	//String grabSpecificBroadcasters(String course)
 	//void addUser(String username, String courses, String current, String languages)
 	//void updateUserPreferences(String username, String courses, String current, String languages)
+	//String grabUserPreferences(String username)
 
 	private static final Logger log = Logger.getLogger(SQLiteData.class.getName());
 
@@ -97,13 +101,13 @@ public class SQLiteData
 		}
 	}
 
-	public void addBroadcaster(String username, String room, String help)
+	public void addBroadcaster(String username, String room, String courses)
 	{
 		try {
-			PreparedStatement pstmt = c.prepareStatement("INSERT INTO BROADCASTER (USERNAME,ROOM,HELP) VALUES (?, ?, ?);");
+			PreparedStatement pstmt = c.prepareStatement("INSERT INTO BROADCASTER (USERNAME,ROOM,COURSES) VALUES (?, ?, ?);");
 			pstmt.setString(1, username);
 			pstmt.setString(2, room);
-			pstmt.setString(3, help);
+			pstmt.setString(3, courses);
 
 			pstmt.executeUpdate();
 			pstmt.close();
@@ -126,53 +130,47 @@ public class SQLiteData
 	}
 
 	//Perhaps have this return a Map or something? No need to return a formatted string.
-	public String grabAllBroadcasters()
-	{
-		String allBroadcasters = null;
-		try {
-			Statement stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM BROADCASTERS;");
+	public ArrayList<Broadcaster> grabAllBroadcasters()  throws SQLException{
+		ArrayList<Broadcaster> broadcasters	= new ArrayList<Broadcaster>();
 
-			while ( rs.next() ) {
-				allBroadcasters += rs.getString("USERNAME");
-				allBroadcasters += " ";
-				allBroadcasters += rs.getString("ROOM");
-				allBroadcasters += " ";
-				allBroadcasters += rs.getString("HELP");
-				allBroadcasters += "\n";
-			}
-			rs.close();
+		PreparedStatement pstmt = c.prepareStatement("SELECT * FROM BROADCASTERS;");
+		ResultSet r = pstmt.executeQuery();
 
-		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
+		while(r.next()) {
+			Broadcaster bc = new Broadcaster();
+			bc.username = r.getString(1);
+			bc.room = r.getString(2);
+			bc.courses = r.getString(3);
+			broadcasters.add(bc);
 		}
-		return allBroadcasters;
+		r.close();
+		pstmt.close();
+
+		return broadcasters;
+
 	}
 
 	//Can't we query this, rather than filter a query of everything?
-	public String grabSpecificBroadcasters(String course)
-	{
-		String courseBroadcasters = null;
-		try {
-			Statement stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM BROADCASTERS;");
+	public ArrayList<Broadcaster> grabSpecificBroadcasters(String course) throws SQLException{
+		ArrayList<Broadcaster> broadcasters	= new ArrayList<Broadcaster>();
 
-			while ( rs.next() ) {
-				if(rs.getString("HELP").contains(course)){
-					courseBroadcasters += rs.getString("USERNAME");
-					courseBroadcasters += " ";
-					courseBroadcasters += rs.getString("ROOM");
-					courseBroadcasters += " ";
-					courseBroadcasters += rs.getString("HELP");
-					courseBroadcasters += "\n";
-				}
+		PreparedStatement pstmt = c.prepareStatement("SELECT * FROM BROADCASTERS;");
+		ResultSet r = pstmt.executeQuery();
+
+		while(r.next()) {
+			if(r.getString("COURSES").contains(course)) {
+				Broadcaster bc = new Broadcaster();
+				bc.username = r.getString(1);
+				bc.room = r.getString(2);
+				bc.courses = r.getString(3);
+				broadcasters.add(bc);
 			}
-			rs.close();
-
-		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
-		return courseBroadcasters;
+		r.close();
+		pstmt.close();
+
+		return broadcasters;
+
 	}
 
 	/**
@@ -214,6 +212,25 @@ public class SQLiteData
 		} catch ( SQLException e ) {
 			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
+	}
+
+	public User grabUserPreferences(String username) throws SQLException{
+
+		PreparedStatement pstmt = c.prepareStatement("SELECT * FROM USER WHERE USERNAME = '"+username+"';");
+		ResultSet r = pstmt.executeQuery();
+
+		User user = new User();
+		user.username = r.getString(1);
+		user.courses = r.getString(2);
+		user.current = r.getString(3);
+		user.languages = r.getString(4);
+	
+		
+		r.close();
+		pstmt.close();
+
+		return user;
+
 	}
 
 	/**
