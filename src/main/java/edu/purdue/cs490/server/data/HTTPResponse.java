@@ -9,7 +9,7 @@ public class HTTPResponse {
 
     Integer status = 500;
     HashMap<String, String> headers = new HashMap<>(8);
-    String body = "";
+    String body;
 
     public static Map<Integer, String> statusDescription;
 
@@ -37,6 +37,7 @@ public class HTTPResponse {
         // Default Headers
         setHeader("Access-Control-Allow-Origin", "*");
         setHeader("Content-Type", "application/json");
+        setBody("");
     }
 
     public static HTTPResponse getHTTPError(int errorCode) {

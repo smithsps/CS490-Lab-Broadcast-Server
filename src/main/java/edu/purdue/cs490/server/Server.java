@@ -21,7 +21,9 @@ import java.util.logging.Logger;
 import java.util.ArrayList;
 
 import edu.purdue.cs490.server.api.ApiRunnable;
-import edu.purdue.cs490.server.api.Status;
+import edu.purdue.cs490.server.api.status.Linux;
+import edu.purdue.cs490.server.api.status.Status;
+import edu.purdue.cs490.server.api.status.Windows;
 import edu.purdue.cs490.server.api.user.Index;
 import edu.purdue.cs490.server.api.user.Login;
 import edu.purdue.cs490.server.api.user.Registration;
@@ -139,7 +141,8 @@ public class Server {
         api.put("/", Index::handleIndex);
 
         api.put("/status", Status::handleStatus);
-        api.put("/status/update/linux", Status::handleUpdateLinux);
+        api.put("/status/update/linux", Linux::handleUpdateLinux);
+        api.put("/status/update/windows", Windows::handleUpdateWindows);
 
         api.put("/user/registration", Registration::handleRegistration);
         api.put("/user/login", Login::handleLogin);
@@ -147,6 +150,7 @@ public class Server {
         api.put("user/preferences", Preferences::handleUser);
 		
 		api.put("/broadcasters", Broadcasters::handleBroadcaster);
+
     }
 
     public SQLiteData getSQLData() {
