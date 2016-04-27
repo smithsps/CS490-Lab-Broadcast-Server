@@ -91,7 +91,8 @@ public class HTTPHandler implements Runnable{
             }
 
             HTTPRequest request = handleHTTPRequest(message);
-            log.fine(String.format("Received: %s %s %s\n", request.getMethod(), request.getUri(), request.getVersion()));
+            System.out.println(String.format("Received: %s %s %s\n", request.getMethod(), request.getUri(), request.getVersion()));
+            System.out.println(request.getBody());
 
 
             // Match request uri to a defined path in apiPaths().
