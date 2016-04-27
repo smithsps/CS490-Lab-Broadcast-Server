@@ -32,7 +32,7 @@ public class SQLiteData
 
 	public SQLiteData(){
 		try {
-			c = DriverManager.getConnection("jdbc:sqlite:" + Server.getInstance().config.get("DatabaseFile"));
+			c = DriverManager.getConnection("jdbc:sqlite:" + Server.getInstance().config.get("file.database"));
 		}catch( SQLException e ) {
 			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage() );
 		}
