@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class HTTPRequest {
 
-    HTTPMethod method;
+    HTTPMethod method = HTTPMethod.ERROR;
     String uri, version;
     HashMap<String, String> headers = new HashMap<String, String>(8);
     String body = "";

@@ -28,12 +28,14 @@ public class SQLiteJDBC
 
     // If db already exists don't attempt to recreate. Somewhat redundant as first statement fails anyways.
     // Maybe have CREATE TABLE IF NOT EXIST instead.
-    if (new File(Server.getInstance().config.get("DatabaseFile")).isFile()) {
+    if (new File(Server.getInstance().config.get("file.database")).isFile()) {
+        log.info("Database file exists, using.");
         return;
     }
 
+    log.info("Database file doesn't exist, creating one.");
     try {
-      c = DriverManager.getConnection("jdbc:sqlite:" + Server.getInstance().config.get("DatabaseFile"));
+      c = DriverManager.getConnection("jdbc:sqlite:" + Server.getInstance().config.get("file.database"));
 	  c.setAutoCommit(false);
 
 ///////////////////////////////CREATE///////////////////////////////////////

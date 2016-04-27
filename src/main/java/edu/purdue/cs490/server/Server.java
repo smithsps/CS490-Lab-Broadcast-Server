@@ -18,7 +18,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.ArrayList;
 
 import edu.purdue.cs490.server.api.ApiRunnable;
 import edu.purdue.cs490.server.api.status.Linux;
@@ -58,9 +57,11 @@ public class Server {
         Server.instance = this;
 
         config = new Config("config.properties");
-        int plainPort = Integer.parseInt(config.get("PlainPort"));
-        int sslPort = Integer.parseInt(config.get("SSLPort"));
-        int workerPoolSize = Integer.parseInt(config.get("WorkerPoolSize"));
+        int plainPort = Integer.parseInt(config.get("port.plain"));
+        int sslPort = Integer.parseInt(config.get("port.ssl"));
+        int workerPoolSize = Integer.parseInt(config.get("size.workerpool"));
+
+
 
         executor = Executors.newFixedThreadPool(workerPoolSize);
         sslInitialization();
@@ -114,12 +115,12 @@ public class Server {
         }
 
         try {
-            fileKeystore = new FileInputStream(config.get("Keystore"));
+            fileKeystore = new FileInputStream(config.get("file.keystore"));
             keyStore = KeyStore.getInstance("JKS");
 
             keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
-            keyStore.load(fileKeystore, config.get("KeystorePassword").toCharArray());
-            keyManagerFactory.init(keyStore, config.get("KeystorePassword").toCharArray());
+            keyStore.load(fileKeystore, config.get("password.keystore").toCharArray());
+            keyManagerFactory.init(keyStore, config.get("password.keystore").toCharArray());
 
             sslContext.init(keyManagerFactory.getKeyManagers(), null, null); //Null defaults
         } catch (FileNotFoundException e) {
@@ -147,7 +148,7 @@ public class Server {
         api.put("/user/registration", Registration::handleRegistration);
         api.put("/user/login", Login::handleLogin);
         api.put("/user/verify/(?<username>\\w*)", Verify::handleVerify);
-        api.put("user/preferences", Preferences::handleUser);
+        api.put("/user/preferences", Preferences::handleUser);
 		
 		api.put("/broadcasters", Broadcasters::handleBroadcaster);
 
@@ -220,6 +221,7 @@ public class Server {
     }
 
     public static void main(String[] args) {
+        Logger.getGlobal().setLevel(Level.CONFIG);
         Server server = new Server();
         server.serverLoop();
     }

@@ -29,7 +29,7 @@ public class Linux {
 
                     String name = (String) data.get("name");
                     Boolean occupied = (Boolean) data.get("occupied");
-                    long update_time = (long) data.get("time");
+                    int update_time = (int) data.get("time");
                     int uptime = (int) data.get("uptime");
 
                     //There is probably a better way to do this, but its fine for now.

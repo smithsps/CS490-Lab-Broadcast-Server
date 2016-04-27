@@ -104,7 +104,7 @@ public class SQLiteData
 	public void addBroadcaster(String username, String room, String courses)
 	{
 		try {
-			PreparedStatement pstmt = c.prepareStatement("INSERT INTO BROADCASTER (USERNAME,ROOM,COURSES) VALUES (?, ?, ?);");
+			PreparedStatement pstmt = c.prepareStatement("INSERT INTO BROADCASTERS (USERNAME,ROOM,COURSES) VALUES (?, ?, ?);");
 			pstmt.setString(1, username);
 			pstmt.setString(2, room);
 			pstmt.setString(3, courses);
@@ -265,7 +265,7 @@ public class SQLiteData
 	 * @throws SQLException
      */
 	public Account getAccount(String username) throws SQLException {
-		PreparedStatement pstmt = c.prepareStatement("SELECT username, password, active, verify FROM accounts WHERE username = ?");
+		PreparedStatement pstmt = c.prepareStatement("SELECT username, password, active, verify FROM ACCOUNTS WHERE username = ?");
 		pstmt.setString(1, username);
 
 		ResultSet r = pstmt.executeQuery();

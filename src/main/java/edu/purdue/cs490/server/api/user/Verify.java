@@ -31,8 +31,6 @@ public class Verify {
         HTTPResponse response = new HTTPResponse();
         ObjectMapper mapper = new ObjectMapper();
 
-
-
         switch (request.getMethod()) {
             case POST:
                 try {
