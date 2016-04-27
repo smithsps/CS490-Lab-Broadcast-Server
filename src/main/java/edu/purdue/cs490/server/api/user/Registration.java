@@ -68,6 +68,12 @@ public class Registration {
                         }
                     }
 
+                    String courses = (String) data.get("courses");
+                    String current = (String) data.get("current");
+                    String languages = (String) data.get("languages");
+
+                    sqlData.updateUserPreferences(username, courses, current, languages);
+
                     // Attempt to send email to user;
                     if (!Server.getInstance().getMailer().registration(username, verify)) {
                         log.warning("Unable to send email to " + username + "@purdue.edu");

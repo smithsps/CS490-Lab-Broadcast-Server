@@ -18,6 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.ArrayList;
 
 import edu.purdue.cs490.server.api.ApiRunnable;
 import edu.purdue.cs490.server.api.Status;
@@ -25,7 +26,8 @@ import edu.purdue.cs490.server.api.user.Index;
 import edu.purdue.cs490.server.api.user.Login;
 import edu.purdue.cs490.server.api.user.Registration;
 import edu.purdue.cs490.server.api.user.Verify;
-import edu.purdue.cs490.server.api.broadcaster.Broadcaster;
+import edu.purdue.cs490.server.api.user.Preferences;
+import edu.purdue.cs490.server.api.broadcasters.Broadcasters;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -142,8 +144,9 @@ public class Server {
         api.put("/user/registration", Registration::handleRegistration);
         api.put("/user/login", Login::handleLogin);
         api.put("/user/verify/(?<username>\\w*)", Verify::handleVerify);
+        api.put("user/preferences", Preferences::handleUser);
 		
-		api.put("/broadcaster", Broadcaster::handleBroadcaster);
+		api.put("/broadcasters", Broadcasters::handleBroadcaster);
     }
 
     public SQLiteData getSQLData() {

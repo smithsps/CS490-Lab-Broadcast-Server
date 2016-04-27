@@ -49,7 +49,7 @@ public class SQLiteJDBC
       sql = "CREATE TABLE BROADCASTERS " +
                    "(USERNAME	   	TEXT    NOT NULL, " + 
                    " ROOM	       	TEXT    NOT NULL, " +
-                   " HELP		   	TEXT	NOT NULL)"; 
+                   " COURSES	   	TEXT	NOT NULL)";
       stmt.executeUpdate(sql);
       
       stmt = c.createStatement();
