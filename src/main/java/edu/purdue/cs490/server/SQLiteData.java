@@ -253,8 +253,8 @@ public class SQLiteData
 		user.courses = r.getString(2);
 		user.current = r.getString(3);
 		user.languages = r.getString(4);
-	
-		
+
+
 		r.close();
 		pstmt.close();
 

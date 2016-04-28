@@ -40,25 +40,25 @@ public class Preferences {
                 try {
                     log.fine(request.getBody());
                     Map data = mapper.readValue(request.getBody(), Map.class);
-					
+
 					String username = (String) data.get("username");
-					
+
 					try{
 						user = sqlData.grabUserPreferences(username);
-                    }catch(SQLException ex){
-						System.out.println(ex.getErrorCode());
-                        log.log(Level.WARNING, "Exception while trying to grab user.", ex);
+                    }catch(SQLException e){
+						System.out.println(e.getErrorCode());
+                        log.log(Level.WARNING, "Exception while trying to grab user.", e);
                         response.setStatus(500);
                         response.setSimpleJsonMessage("error", "Did not match our records.");
-					}	
-					
+					}
+
 				} catch (IOException e) {
                     log.log(Level.WARNING, "Error while trying to read JSON from response", e);
                     return HTTPResponse.getHTTPError(400);
                 }
-				
+
 				ObjectWriter objWriter = mapper.writer().withDefaultPrettyPrinter();
-				
+
 				try{
 				    response.setBody(objWriter.writeValueAsString(user));
 					response.setStatus(200);
