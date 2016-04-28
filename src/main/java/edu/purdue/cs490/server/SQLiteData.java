@@ -56,8 +56,8 @@ public class SQLiteData
 	{
 		int total = 0;
 
-		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM WINDOWS WHERE OCCUPIED = 1 AND LAB = ?");
-		pstmt.setString(1, labroom);
+		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM WINDOWS WHERE TIME >= Datetime('now', '-5 minutes')");
+		//pstmt.setString(1, labroom);
 
 		ResultSet rs = pstmt.executeQuery();
 		total = rs.getInt(1);
