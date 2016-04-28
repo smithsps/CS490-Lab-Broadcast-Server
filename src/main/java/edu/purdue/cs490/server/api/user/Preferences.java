@@ -47,7 +47,7 @@ public class Preferences {
 						user = sqlData.grabUserPreferences(username);
                     }catch(SQLException ex){
 						System.out.println(ex.getErrorCode());
-                        log.log(Level.WARNING, "Exception while trying to grab user.");
+                        log.log(Level.WARNING, "Exception while trying to grab user.", ex);
                         response.setStatus(500);
                         response.setSimpleJsonMessage("error", "Did not match our records.");
 					}	

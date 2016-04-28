@@ -38,67 +38,96 @@ public class SQLiteData
 		}
 	}
 
-	public int grabLab(String labroom)
+	public int grabLinuxLab(String labroom) throws SQLException
 	{
 		int total = 0;
-		try {
-			// Somewhat susceptible to SQL Injection as
-			// prepared statement can't be used on this, as a table name is appended.
-			Statement stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM " + labroom +  " WHERE OCCUPIED = 1");
-			total = rs.getInt(1);
-			rs.close();
 
-		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
-		}
+		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM LINUX WHERE OCCUPIED = 1 AND LAB = ?");
+		pstmt.setString(1, labroom);
+
+		ResultSet rs = pstmt.executeQuery();
+		total = rs.getInt(1);
+		rs.close();
+
 		return total;
 	}
 
-	public void updateLabPC(String labroom, String machine, int occupied)
+	public int gradWindowsLab(String labroom) throws SQLException
 	{
+		int total = 0;
 
-		try {
-			machine = machine.toUpperCase();
-			labroom = labroom.toUpperCase();
+		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM WINDOWS WHERE OCCUPIED = 1 AND LAB = ?");
+		pstmt.setString(1, labroom);
 
-			// Somewhat susceptible to SQL Injection as
-			// prepared statement can't be used on this, as a table name is appended.
-			PreparedStatement pstmt = c.prepareStatement("UPDATE " + labroom + " SET OCCUPIED = ? WHERE MACHINE_NAME = ?;");
-			pstmt.setInt(1, occupied);
-			pstmt.setString(2, machine);
+		ResultSet rs = pstmt.executeQuery();
+		total = rs.getInt(1);
+		rs.close();
 
-			pstmt.executeUpdate();
-			pstmt.close();
-
-		} catch ( SQLException e ) {
-			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
-		}
+		return total;
 	}
 
-	public void updateLinux(String name, String lab, String current_user, long update_time, int uptime, Boolean occupied)
+	public void updateLinux(String name, String lab, String current_user, int time, int uptime, Boolean occupied)
 	{
 		try {
 			name = name.toLowerCase();
-			lab = lab.toLowerCase();
-			current_user = current_user.toLowerCase();
+			lab = lab.toUpperCase();
+
+			if (current_user == null) {
+				current_user = "";
+			}
 
 
-			PreparedStatement pstmt = c.prepareStatement("INSERT OR REPLACE INTO LINUX (name, lab, user, occupied, update_time, uptime) " +
+			PreparedStatement pstmt = c.prepareStatement("INSERT OR REPLACE INTO LINUX (name, lab, user, occupied, time, uptime) " +
 																			"VALUES(?, ?, ?, ?, ?, ?)");
 			pstmt.setString(1, name);
 			pstmt.setString(2, lab);
 			pstmt.setString(3, current_user);
 			pstmt.setBoolean(4, occupied);
-			pstmt.setDate(5, new Date(update_time));
+			pstmt.setTimestamp(5, new Timestamp(time));
 			pstmt.setInt(6, uptime);
 
 			pstmt.executeUpdate();
 			pstmt.close();
 
+			updateHistory(name, occupied, time);
 		} catch ( SQLException e ) {
 			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
 		}
+	}
+
+	public void updateWindows(String name, String user, int time)
+	{
+		try {
+			name = name.toLowerCase();
+			user = user.toLowerCase();
+
+
+			PreparedStatement pstmt = c.prepareStatement("INSERT OR REPLACE INTO LINUX (name, user, time) " +
+					"VALUES(?, ?, ?)");
+			pstmt.setString(1, name);
+			pstmt.setString(2, user);
+			pstmt.setTimestamp(3, new Timestamp(time));
+
+
+			pstmt.executeUpdate();
+			pstmt.close();
+
+			//As a windows computer only reports when someone is logged in, occupied is always true.
+			updateHistory(name, true, time);
+
+		} catch ( SQLException e ) {
+			log.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage(), e);
+		}
+	}
+
+	public void updateHistory(String name, Boolean occupied, int time) throws SQLException{
+		PreparedStatement pstmt = c.prepareStatement("INSERT INTO HISTORY (name, occupied, time) VALUES (?, ?, ?)");
+		pstmt.setString(1, name);
+		pstmt.setBoolean(2, occupied);
+		pstmt.setTimestamp(3, new Timestamp(time));
+
+		pstmt.executeUpdate();
+		pstmt.close();
 	}
 
 	public void addBroadcaster(String username, String room, String courses)
@@ -216,7 +245,7 @@ public class SQLiteData
 
 	public User grabUserPreferences(String username) throws SQLException{
 
-		PreparedStatement pstmt = c.prepareStatement("SELECT * FROM USER WHERE USERNAME = '"+username+"';");
+		PreparedStatement pstmt = c.prepareStatement("SELECT * FROM USERS WHERE USERNAME = '"+username+"';");
 		ResultSet r = pstmt.executeQuery();
 
 		User user = new User();

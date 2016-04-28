@@ -26,24 +26,19 @@ public class Windows {
                     log.fine(request.getBody());
                     Map data = mapper.readValue(request.getBody(), Map.class);
 
-                    String machine = (String) data.get("name");
-                    int occupied = (Boolean) data.get("occupied") ? 1 : 0;
+                    String user, name;
+                    int time;
 
-                    //There is probably a better way to do this, but its fine for now.
-                    String labroom = "";
-                    if (machine.contains("moore")) {
-                        labroom = "LWSNB146";
-                    } else if (machine.contains("sslab")) {
-                        labroom = "LWSNB158";
-                    } else if (machine.contains("pod")) {
-                        labroom = "LWSNB148";
-                    } else if (machine.contains("borg")) {
-                        labroom = "HAASG40";
-                    } else if (machine.contains("xinu")) {
-                        labroom = "HAAS257";
+                    try {
+                        name = (String) data.get("name");
+                        user = (String) data.get("user");
+                        time = (int) data.get("time");
+                    } catch (Exception e) {
+                        log.log(Level.WARNING, "Invalid windows status update.", e);
+                        return response.getHTTPError(400);
                     }
 
-                    sqlData.updateLabPC(labroom, machine, occupied);
+                    sqlData.updateWindows(name, user, time);
 
                     // 200 = Success, and since we are always successful we always success.
                     // In the future we can parse the body and validate it.
