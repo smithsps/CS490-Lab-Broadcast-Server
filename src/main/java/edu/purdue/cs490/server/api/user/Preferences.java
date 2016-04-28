@@ -35,7 +35,7 @@ public class Preferences {
         ObjectMapper mapper = new ObjectMapper();
 
         switch (request.getMethod()) {
-            case GET:
+            case POST:
             	User user = new User();
                 try {
                     log.fine(request.getBody());
@@ -69,7 +69,6 @@ public class Preferences {
 
 				return response;
 
-            case POST:
             case PUT:
                 try {
                     log.fine(request.getBody());
