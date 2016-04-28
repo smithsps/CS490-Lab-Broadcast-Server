@@ -49,7 +49,10 @@ public class Mailer {
      */
     public Boolean registration(String username, String verification) {
 
-        String body = "Lab Broadcast Test\n Verification: " + verification;
+        String body = "Lab Broadcast Registration\n" +
+                "<a href=\"mc15.cs.purdue.edu:5500/verify/" + username + "?v=" + verification + "\"> " +
+                "Click here to activate your account. <br/> <br/> Regards, <br/> The Lab Broadcast Team" ;
+
 
         return sendEmail(username + "@purdue.edu", "Welcome to Lab Broadcast", body);
     }
@@ -62,7 +65,7 @@ public class Mailer {
         System.out.println(body);
         try {
             message.setFrom(new InternetAddress(username + "@purdue.edu"));
-            message.setRecipient(Message.RecipientType.TO, new InternetAddress("bshrawde@purdue.edu"));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress("to"));
 
             message.setSubject(subject);
             message.setText(body);
