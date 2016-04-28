@@ -145,9 +145,10 @@ public class Server {
         api.put("/status/update/linux", Linux::handleUpdateLinux);
         api.put("/status/update/windows", Windows::handleUpdateWindows);
 
+        api.put("/user/register", Registration::handleRegistration);
         api.put("/user/registration", Registration::handleRegistration);
         api.put("/user/login", Login::handleLogin);
-        api.put("/user/verify/(?<username>\\w*)", Verify::handleVerify);
+        api.put("/user/verify(?<username>/\\w*)", Verify::handleVerify);
         api.put("/user/preferences", Preferences::handleUser);
 		
 		api.put("/broadcasters", Broadcasters::handleBroadcaster);

@@ -69,6 +69,7 @@ public class Preferences {
 
 				return response;
 
+            case POST:
             case PUT:
                 try {
                     log.fine(request.getBody());

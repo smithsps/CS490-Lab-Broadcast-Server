@@ -84,7 +84,7 @@ public class SQLiteData
 			current_user = current_user.toLowerCase();
 
 
-			PreparedStatement pstmt = c.prepareStatement("INSERT INTO LINUX (name, lab, user, occupied, update_time, uptime) " +
+			PreparedStatement pstmt = c.prepareStatement("INSERT OR REPLACE INTO LINUX (name, lab, user, occupied, update_time, uptime) " +
 																			"VALUES(?, ?, ?, ?, ?, ?)");
 			pstmt.setString(1, name);
 			pstmt.setString(2, lab);
