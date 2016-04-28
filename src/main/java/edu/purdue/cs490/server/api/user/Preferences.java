@@ -79,7 +79,7 @@ public class Preferences {
                     String current = (String) data.get("current");
                     String languages = (String) data.get("languages");
 
-                    sqlData.addUser(username, courses, current, languages);
+                    sqlData.updateUserPreferences(username, courses, current, languages);
 
 
                 } catch (IOException e) {

@@ -72,7 +72,7 @@ public class Registration {
                     String current = (String) data.get("current");
                     String languages = (String) data.get("languages");
 
-                    sqlData.updateUserPreferences(username, courses, current, languages);
+                    sqlData.addUser(username, courses, current, languages);
 
                     // Attempt to send email to user;
                     if (!Server.getInstance().getMailer().registration(username, verify)) {
