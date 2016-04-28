@@ -216,7 +216,7 @@ public class SQLiteData
 
 	public User grabUserPreferences(String username) throws SQLException{
 
-		PreparedStatement pstmt = c.prepareStatement("SELECT * FROM USER WHERE USERNAME = '"+username+"';");
+		PreparedStatement pstmt = c.prepareStatement("SELECT * FROM USERS WHERE USERNAME = '"+username+"';");
 		ResultSet r = pstmt.executeQuery();
 
 		User user = new User();
@@ -224,8 +224,8 @@ public class SQLiteData
 		user.courses = r.getString(2);
 		user.current = r.getString(3);
 		user.languages = r.getString(4);
-	
-		
+
+
 		r.close();
 		pstmt.close();
 
