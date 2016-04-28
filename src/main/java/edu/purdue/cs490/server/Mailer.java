@@ -49,9 +49,10 @@ public class Mailer {
      */
     public Boolean registration(String username, String verification) {
 
-        String body = "Lab Broadcast Registration\n" +
-                "<html><a href=\"mc15.cs.purdue.edu:5500/verify/" + username + "?v=" + verification + "\"></html>" +
-                "Click here to activate your account. \n\n Regards, <br/> The Lab Broadcast Team" ;
+        String verifyUrl = "mc15.cs.purdue.edu:5500/verify/" + username + "?v=" + verification;
+        String body = "Lab Broadcast Registration\n\n" +
+                "Follow this link to activate your account:\n" +
+                 verifyUrl + " \n\n Regards, \n The Lab Broadcast Team";
 
 
         return sendEmail(username + "@purdue.edu", "Welcome to Lab Broadcast", body);
@@ -60,9 +61,9 @@ public class Mailer {
 
     private Boolean sendEmail(String to, String subject, String body){
         Message message = new MimeMessage(session);
-        System.out.println(to);
-        System.out.println(subject);
-        System.out.println(body);
+        log.fine(to);
+        log.fine(subject);
+        log.fine(body);
         try {
             message.setFrom(new InternetAddress(username + "@purdue.edu"));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));

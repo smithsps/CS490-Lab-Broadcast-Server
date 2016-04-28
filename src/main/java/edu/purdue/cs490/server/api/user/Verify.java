@@ -57,7 +57,7 @@ public class Verify {
 
                         if (!account.verifyCode.equals(verifyCode)) {
                             response.setStatus(403);
-                            response.setSimpleJsonMessage("success", "Incorrect verification code.");
+                            response.setSimpleJsonMessage("error", "Incorrect verification code.");
                             return response;
                         }
 
