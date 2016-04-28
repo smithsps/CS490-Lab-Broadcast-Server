@@ -49,6 +49,12 @@ public class Verify {
                     try {
                         Account account = sqlData.getAccount(username);
 
+                        if (account.active) {
+                            response.setStatus(200);
+                            response.setSimpleJsonMessage("success", "Account already verified!");
+                            return response;
+                        }
+
                         if (!account.verifyCode.equals(verifyCode)) {
                             response.setStatus(403);
                             response.setSimpleJsonMessage("success", "Incorrect verification code.");

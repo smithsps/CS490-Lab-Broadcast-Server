@@ -50,8 +50,8 @@ public class Mailer {
     public Boolean registration(String username, String verification) {
 
         String body = "Lab Broadcast Registration\n" +
-                "<a href=\"mc15.cs.purdue.edu:5500/verify/" + username + "?v=" + verification + "\"> " +
-                "Click here to activate your account. <br/> <br/> Regards, <br/> The Lab Broadcast Team" ;
+                "<html><a href=\"mc15.cs.purdue.edu:5500/verify/" + username + "?v=" + verification + "\"></html>" +
+                "Click here to activate your account. \n\n Regards, <br/> The Lab Broadcast Team" ;
 
 
         return sendEmail(username + "@purdue.edu", "Welcome to Lab Broadcast", body);
