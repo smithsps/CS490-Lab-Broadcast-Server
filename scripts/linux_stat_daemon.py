@@ -78,6 +78,7 @@ def get_computer_stats():
 
         user['tty'] = line[1]
         if 'tty' in user['tty']:
+            data['current_user'] = line[0];
             data['occupied'] = True
 
         # user['from'] = line[2]

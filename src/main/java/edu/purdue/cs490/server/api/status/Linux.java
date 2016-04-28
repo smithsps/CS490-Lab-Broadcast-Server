@@ -29,8 +29,10 @@ public class Linux {
 
                     String name = (String) data.get("name");
                     Boolean occupied = (Boolean) data.get("occupied");
-                    int update_time = (int) data.get("time");
+                    int time = (int) data.get("time");
                     int uptime = (int) data.get("uptime");
+
+                    String currentUser = (String) data.get("current_user");
 
                     //There is probably a better way to do this, but its fine for now.
                     String labroom = "";
@@ -46,8 +48,7 @@ public class Linux {
                         labroom = "HAAS257";
                     }
 
-                    sqlData.updateLinux(name, labroom, "", update_time, uptime, occupied);
-                    sqlData.updateLabPC(labroom, name, occupied ? 1 : 0);
+                    sqlData.updateLinux(name, labroom, currentUser, time, uptime, occupied);
 
                     // 200 = Success, and since we are always successful we always success.
                     // In the future we can parse the body and validate it.

@@ -131,22 +131,22 @@ public class SQLiteJDBC
                 " lab           TEXT   NOT NULL," +
                 " user          INT    NOT NULL," +
                 " occupied      INT    NOT NULL," +
-                " update_time   INT    NOT NULL," +
+                " time          NUMERIC    NOT NULL," +
                 " uptime        INT    NOT NULL)";
       stmt.executeUpdate(sql);
 
       stmt = c.createStatement();
       sql = "CREATE TABLE WINDOWS" +
                 "(name          TEXT   PRIMARY KEY     NOT NULL," +
-                " occupied      INT    NOT NULL," +
-                " update_time   INT    NOT NULL)";
+                " user          TEXT    NOT NULL," +
+                " time          NUMERIC    NOT NULL)";
       stmt.executeUpdate(sql);
 
       stmt = c.createStatement();
       sql = "CREATE TABLE HISTORY" +
                 "(name          TEXT   NOT NULL," +
                 " occupied      INT    NOT NULL," +
-                " time          INT    NOT NULL)";
+                " time          NUMERIC    NOT NULL)";
       stmt.executeUpdate(sql);
 
       stmt.close();

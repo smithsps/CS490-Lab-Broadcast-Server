@@ -11,6 +11,7 @@ import edu.purdue.cs490.server.data.HTTPRequest;
 import edu.purdue.cs490.server.data.HTTPResponse;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -29,14 +30,19 @@ public class Status {
             case GET:
                 Map<String, Integer> labs = new HashMap<>();
 
-                labs.put("LWSNB160", sqlData.grabLab("LWSNB160"));
-                labs.put("LWSNB158", sqlData.grabLab("LWSNB158"));
-                labs.put("LWSNB148", sqlData.grabLab("LWSNB148"));
-                labs.put("LWSNB146", sqlData.grabLab("LWSNB146"));
-                labs.put("LWSNB131", sqlData.grabLab("LWSNB131"));
-                labs.put("HAASG56", sqlData.grabLab("HAASG56"));
-                labs.put("HAASG40", sqlData.grabLab("HAASG40"));
-                labs.put("HAAS257", sqlData.grabLab("HAAS257"));
+                try {
+                    labs.put("LWSNB160", sqlData.gradWindowsLab("LWSNB160"));
+                    labs.put("LWSNB158", sqlData.grabLinuxLab("LWSNB158"));
+                    labs.put("LWSNB148", sqlData.grabLinuxLab("LWSNB148"));
+                    labs.put("LWSNB146", sqlData.grabLinuxLab("LWSNB146"));
+                    labs.put("LWSNB131", sqlData.gradWindowsLab("LWSNB131"));
+                    labs.put("HAASG56", sqlData.gradWindowsLab("HAASG56"));
+                    labs.put("HAASG40", sqlData.grabLinuxLab("HAASG40"));
+                    labs.put("HAAS257", sqlData.grabLinuxLab("HAAS257"));
+                } catch (SQLException e) {
+                    log.log(Level.WARNING, "Unable to create status response", e);
+                    return response.getHTTPError(500);
+                }
 
                 ObjectWriter objWriter = mapper.writer().withDefaultPrettyPrinter();
 
