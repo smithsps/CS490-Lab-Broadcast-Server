@@ -9,8 +9,7 @@ import edu.purdue.cs490.server.data.sql.User;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -181,20 +180,19 @@ public class SQLiteData
 	}
 
 	//Can't we query this, rather than filter a query of everything?
-	public ArrayList<Broadcaster> grabSpecificBroadcasters(String course) throws SQLException{
+	public ArrayList<Broadcaster> grabSpecificBroadcasters(String room) throws SQLException{
 		ArrayList<Broadcaster> broadcasters	= new ArrayList<Broadcaster>();
 
-		PreparedStatement pstmt = c.prepareStatement("SELECT * FROM BROADCASTERS;");
+		PreparedStatement pstmt = c.prepareStatement("SELECT * FROM BROADCASTERS WHERE room = ?;");
+		pstmt.setString(1, room);
 		ResultSet r = pstmt.executeQuery();
 
 		while(r.next()) {
-			if(r.getString("COURSES").contains(course)) {
-				Broadcaster bc = new Broadcaster();
-				bc.username = r.getString(1);
-				bc.room = r.getString(2);
-				bc.courses = r.getString(3);
-				broadcasters.add(bc);
-			}
+			Broadcaster bc = new Broadcaster();
+			bc.username = r.getString(1);
+			bc.room = r.getString(2);
+			bc.courses = r.getString(3);
+			broadcasters.add(bc);
 		}
 		r.close();
 		pstmt.close();
@@ -360,7 +358,7 @@ public class SQLiteData
 		return rs.getString(1);
 	}
 
-	public Map<Integer, Float> getHistory(String lab, long startTime, long endTime, int aggregateByMinutes) throws SQLException {
+	public List<Float> getHistory(String lab, long startTime, long endTime, int aggregateByMinutes) throws SQLException {
 		PreparedStatement pstmt = c.prepareStatement("SELECT time, AVG(count) as average FROM" +
 				" (SELECT (time - time % 300) as time, COUNT(*) as count" +
 				" FROM HISTORY WHERE instr(name, ?) and OCCUPIED=1 GROUP BY time % 86400 - time % 300)" +
@@ -374,16 +372,16 @@ public class SQLiteData
 
 		ResultSet rs = pstmt.executeQuery();
 
-		Map<Integer, Float> map = new TreeMap<>();
+		List<Float> list = new ArrayList<>((int) (endTime - startTime) / aggregateByMinutes / 60);
 
 		while (rs.next()) {
-			map.put(rs.getInt("time"), rs.getFloat("average"));
+			list.add(rs.getFloat("average"));
 		}
 
 		rs.close();
 		pstmt.close();
 
-		return map;
+		return list;
 	}
 }
 

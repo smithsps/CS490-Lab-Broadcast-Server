@@ -43,9 +43,9 @@ public class Broadcasters {
                     log.fine(request.getBody());
                     Map data = mapper.readValue(request.getBody(), Map.class);
 					
-					String courses = (String) data.get("courses");
+					String room = (String) data.get("courses");
 					try{
-						broadcasters = sqlData.grabSpecificBroadcasters(courses);
+						broadcasters = sqlData.grabSpecificBroadcasters(room);
 					}catch(SQLException ex){
 						System.out.println(ex.getErrorCode());
                         log.log(Level.WARNING, "Exception while trying to grab broadcasters.");
@@ -62,7 +62,7 @@ public class Broadcasters {
 				    response.setBody(objWriter.writeValueAsString(broadcasters));
 					response.setStatus(200);
 				} catch (JsonProcessingException e) {
-                    log.log(Level.WARNING, "Error while building json response for broadcasers", e);
+                    log.log(Level.WARNING, "Error while building json response for broadcasters", e);
                     return HTTPResponse.getHTTPError(500);
                 }
 

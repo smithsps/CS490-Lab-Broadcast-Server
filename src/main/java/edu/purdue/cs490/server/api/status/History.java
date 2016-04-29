@@ -8,12 +8,9 @@ import edu.purdue.cs490.server.SQLiteData;
 import edu.purdue.cs490.server.Server;
 import edu.purdue.cs490.server.data.HTTPRequest;
 import edu.purdue.cs490.server.data.HTTPResponse;
-import sun.util.resources.ar.CalendarData_ar;
 
-import java.sql.Date;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -30,16 +27,21 @@ public class History {
 
         switch (request.getMethod()) {
             case GET:
-                Map<String, Map<Integer, Float>> labHistories = new HashMap<>();
+                Map<String, Object> labHistory = new HashMap<>();
 
                 long startTime = Instant.now().getEpochSecond() - 30 * 60 * 1000;
                 long endTime = Instant.now().getEpochSecond() + 30 * 60 * 1000;
+
+                labHistory.put("startTime", startTime);
+                labHistory.put("endTime", endTime);
+                labHistory.put("interval", 30);
+
                 try {
-                    labHistories.put("LWSNB146", sqlData.getHistory("moore", startTime, endTime, 30));
-                    labHistories.put("LWSNB148", sqlData.getHistory("pod", startTime, endTime, 30));
-                    labHistories.put("LWSNB158", sqlData.getHistory("sslab", startTime, endTime, 30));
-                    labHistories.put("HAASG40", sqlData.getHistory("borg", startTime, endTime, 30));
-                    labHistories.put("HAAS257", sqlData.getHistory("pod", startTime, endTime, 30));
+                    labHistory.put("LWSNB146", sqlData.getHistory("moore", startTime, endTime, 30));
+                    labHistory.put("LWSNB148", sqlData.getHistory("pod", startTime, endTime, 30));
+                    labHistory.put("LWSNB158", sqlData.getHistory("sslab", startTime, endTime, 30));
+                    labHistory.put("HAASG40", sqlData.getHistory("borg", startTime, endTime, 30));
+                    labHistory.put("HAAS257", sqlData.getHistory("pod", startTime, endTime, 30));
                 } catch (SQLException e) {
                     log.log(Level.WARNING, "Unable to create history response", e);
                     return response.getHTTPError(500);
@@ -48,7 +50,7 @@ public class History {
                 ObjectWriter objWriter = mapper.writer().withDefaultPrettyPrinter();
 
                 try {
-                    response.setBody(objWriter.writeValueAsString(labHistories));
+                    response.setBody(objWriter.writeValueAsString(labHistory));
                     response.setStatus(200);
                 } catch (JsonProcessingException e) {
                     log.log(Level.WARNING, "Error while building json response for labs", e);
