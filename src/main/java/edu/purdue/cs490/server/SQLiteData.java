@@ -42,7 +42,7 @@ public class SQLiteData
 	{
 		int total = 0;
 
-		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM LINUX WHERE OCCUPIED = 1 AND LAB = ?");
+		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM LINUX WHERE OCCUPIED = 1 AND LAB = ? and WHERE TIME >= Datetime('now', '-10 minutes')");
 		pstmt.setString(1, labroom);
 
 		ResultSet rs = pstmt.executeQuery();

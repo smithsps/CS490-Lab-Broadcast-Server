@@ -36,7 +36,7 @@ public class Broadcasters {
         ObjectMapper mapper = new ObjectMapper();
 
         switch (request.getMethod()) {
-			case GET:
+			case POST:
 
                 ArrayList<Broadcaster> broadcasters = new ArrayList<Broadcaster>();
                 try {
