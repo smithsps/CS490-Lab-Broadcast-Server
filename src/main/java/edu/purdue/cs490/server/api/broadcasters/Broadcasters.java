@@ -43,7 +43,7 @@ public class Broadcasters {
                     log.fine(request.getBody());
                     Map data = mapper.readValue(request.getBody(), Map.class);
 					
-					String room = (String) data.get("courses");
+					String room = (String) data.get("room");
 					try{
 						broadcasters = sqlData.grabSpecificBroadcasters(room);
 					}catch(SQLException ex){

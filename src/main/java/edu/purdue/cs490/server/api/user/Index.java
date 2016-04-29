@@ -20,7 +20,7 @@ public class Index {
             "</head>\n" +
             "<body>\n" +
             "   <h2>Lab Broadcast API Documentation</h2>\n" +
-            "   <p>Last Updated: April 17, 2016</p>\n" +
+            "   <p>Last Updated: April 29, 2016</p>\n" +
             "   <p><a href=\"https://github.com/smithsps/CS490-Lab-Broadcast-Server\">Github Project</a></p>\n" +
             "   \n" +
             "</body>\n" +

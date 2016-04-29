@@ -29,19 +29,22 @@ public class History {
             case GET:
                 Map<String, Object> labHistory = new HashMap<>();
 
-                long startTime = Instant.now().getEpochSecond() - 30 * 60 * 1000;
-                long endTime = Instant.now().getEpochSecond() + 30 * 60 * 1000;
+                long startTime = Instant.now().getEpochSecond() - 60 * 3 * 60 ;
+                long endTime = Instant.now().getEpochSecond() + 60 * 3 * 60;
+
+                startTime = startTime - startTime % 1800;
+                endTime = endTime - endTime % 1800;
 
                 labHistory.put("startTime", startTime);
                 labHistory.put("endTime", endTime);
-                labHistory.put("interval", 30);
+                labHistory.put("interval", 30 * 60);
 
                 try {
-                    labHistory.put("LWSNB146", sqlData.getHistory("moore", startTime, endTime, 30));
-                    labHistory.put("LWSNB148", sqlData.getHistory("pod", startTime, endTime, 30));
-                    labHistory.put("LWSNB158", sqlData.getHistory("sslab", startTime, endTime, 30));
-                    labHistory.put("HAASG40", sqlData.getHistory("borg", startTime, endTime, 30));
-                    labHistory.put("HAAS257", sqlData.getHistory("pod", startTime, endTime, 30));
+                    labHistory.put("LWSNB146", sqlData.getHistory("moore", startTime, endTime, 30 * 60));
+                    labHistory.put("LWSNB148", sqlData.getHistory("pod", startTime, endTime, 30 * 60));
+                    labHistory.put("LWSNB158", sqlData.getHistory("sslab", startTime, endTime, 30 * 60));
+                    labHistory.put("HAASG40", sqlData.getHistory("borg", startTime, endTime, 30 * 60));
+                    labHistory.put("HAAS257", sqlData.getHistory("pod", startTime, endTime, 30 * 60));
                 } catch (SQLException e) {
                     log.log(Level.WARNING, "Unable to create history response", e);
                     return response.getHTTPError(500);

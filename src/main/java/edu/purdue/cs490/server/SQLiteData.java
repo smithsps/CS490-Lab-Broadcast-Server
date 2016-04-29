@@ -42,7 +42,7 @@ public class SQLiteData
 	{
 		int total = 0;
 
-		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM LINUX WHERE OCCUPIED = 1 AND LAB = ? and WHERE TIME >= Datetime('now', '-10 minutes')");
+		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM LINUX WHERE OCCUPIED = 1 AND LAB = ? AND TIME >= strftime('%s','now')-600");
 		pstmt.setString(1, labroom);
 
 		ResultSet rs = pstmt.executeQuery();
@@ -56,7 +56,7 @@ public class SQLiteData
 	{
 		int total = 0;
 
-		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM WINDOWS WHERE TIME >= Datetime('now', '-5 minutes')");
+		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM WINDOWS WHERE TIME >= strftime('%s','now')-600");
 		//pstmt.setString(1, labroom);
 
 		ResultSet rs = pstmt.executeQuery();
@@ -360,15 +360,15 @@ public class SQLiteData
 
 	public List<Float> getHistory(String lab, long startTime, long endTime, int aggregateByMinutes) throws SQLException {
 		PreparedStatement pstmt = c.prepareStatement("SELECT time, AVG(count) as average FROM" +
-				" (SELECT (time - time % 300) as time, COUNT(*) as count" +
+				" (SELECT time % 86400 as time, COUNT(*) as count" +
 				" FROM HISTORY WHERE instr(name, ?) and OCCUPIED=1 GROUP BY time % 86400 - time % 300)" +
-				" WHERE time > ? AND time < ?" +
+				" WHERE time >= ? AND time <= ?" +
 				" GROUP BY time - time % ?");
 
 		pstmt.setString(1, lab);
-		pstmt.setLong(2, startTime);
-		pstmt.setLong(3, endTime);
-		pstmt.setInt(4, aggregateByMinutes * 60);
+		pstmt.setLong(2, startTime % 86400);
+		pstmt.setLong(3, endTime % 86400);
+		pstmt.setInt(4, aggregateByMinutes);
 
 		ResultSet rs = pstmt.executeQuery();
 
@@ -383,5 +383,24 @@ public class SQLiteData
 
 		return list;
 	}
+
+	public List<String> getNonRespondingLinux() throws SQLException
+	{
+		PreparedStatement pstmt = c.prepareStatement("SELECT name FROM LINUX WHERE TIME <= strftime('%s','now')-900");
+		ResultSet rs = pstmt.executeQuery();
+
+		List<String> list = new ArrayList<>();
+
+		while (rs.next()) {
+			list.add(rs.getString("name"));
+		}
+
+		rs.close();
+		pstmt.close();
+
+
+		return list;
+	}
+
 }
 

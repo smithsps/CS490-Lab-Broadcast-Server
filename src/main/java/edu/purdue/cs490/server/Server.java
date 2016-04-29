@@ -194,6 +194,8 @@ public class Server {
                 }
             }
         });
+
+        executor.execute(new LabWatcher());
     }
 
     /**
