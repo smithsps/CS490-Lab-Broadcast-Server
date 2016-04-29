@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import edu.purdue.cs490.server.api.ApiRunnable;
+import edu.purdue.cs490.server.api.status.History;
 import edu.purdue.cs490.server.api.status.Linux;
 import edu.purdue.cs490.server.api.status.Status;
 import edu.purdue.cs490.server.api.status.Windows;
@@ -144,6 +145,7 @@ public class Server {
         api.put("/status", Status::handleStatus);
         api.put("/status/update/linux", Linux::handleUpdateLinux);
         api.put("/status/update/windows", Windows::handleUpdateWindows);
+        api.put("/status/history", History::handleHistory);
 
         api.put("/user/register", Registration::handleRegistration);
         api.put("/user/registration", Registration::handleRegistration);

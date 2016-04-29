@@ -5,13 +5,14 @@ import java.sql.*;
 import edu.purdue.cs490.server.data.sql.Account;
 import edu.purdue.cs490.server.data.sql.Broadcaster;
 import edu.purdue.cs490.server.data.sql.User;
-import org.sqlite.SQLiteErrorCode;
 
-import java.time.LocalTime;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.ArrayList;
 
 public class SQLiteData
 {
@@ -337,7 +338,7 @@ public class SQLiteData
 													 "VALUES (?,?,?)");
 		pstmt.setString(1, username);
 		pstmt.setString(2, token);
-		pstmt.setTime(3, Time.valueOf(LocalTime.now()));
+		pstmt.setDate(3, new Date(Calendar.getInstance().getTimeInMillis()));
 
 		pstmt.executeUpdate();
 		pstmt.close();
@@ -357,6 +358,32 @@ public class SQLiteData
 		pstmt.close();
 
 		return rs.getString(1);
+	}
+
+	public Map<Integer, Float> getHistory(String lab, long startTime, long endTime, int aggregateByMinutes) throws SQLException {
+		PreparedStatement pstmt = c.prepareStatement("SELECT time, AVG(count) as average FROM" +
+				" (SELECT (time - time % 300) as time, COUNT(*) as count" +
+				" FROM HISTORY WHERE instr(name, ?) and OCCUPIED=1 GROUP BY time % 86400 - time % 300)" +
+				" WHERE time > ? AND time < ?" +
+				" GROUP BY time - time % ?");
+
+		pstmt.setString(1, lab);
+		pstmt.setLong(2, startTime);
+		pstmt.setLong(3, endTime);
+		pstmt.setInt(4, aggregateByMinutes * 60);
+
+		ResultSet rs = pstmt.executeQuery();
+
+		Map<Integer, Float> map = new TreeMap<>();
+
+		while (rs.next()) {
+			map.put(rs.getInt("time"), rs.getFloat("average"));
+		}
+
+		rs.close();
+		pstmt.close();
+
+		return map;
 	}
 }
 
