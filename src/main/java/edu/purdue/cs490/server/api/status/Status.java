@@ -31,12 +31,12 @@ public class Status {
                 Map<String, Integer> labs = new HashMap<>();
 
                 try {
-                    labs.put("LWSNB160", sqlData.gradWindowsLab("LWSNB160"));
+                    labs.put("LWSNB160", sqlData.gradWindowsLab("1398-k%"));
                     labs.put("LWSNB158", sqlData.grabLinuxLab("LWSNB158"));
                     labs.put("LWSNB148", sqlData.grabLinuxLab("LWSNB148"));
                     labs.put("LWSNB146", sqlData.grabLinuxLab("LWSNB146"));
-                    labs.put("LWSNB131", sqlData.gradWindowsLab("LWSNB131"));
-                    labs.put("HAASG56", sqlData.gradWindowsLab("HAASG56"));
+                    labs.put("LWSNB131", sqlData.gradWindowsLab("1398-p%"));
+                    labs.put("HAASG56", sqlData.gradWindowsLab("1398-es%"));
                     labs.put("HAASG40", sqlData.grabLinuxLab("HAASG40"));
                     labs.put("HAAS257", sqlData.grabLinuxLab("HAAS257"));
                 } catch (SQLException e) {

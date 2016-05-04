@@ -145,6 +145,7 @@ public class Server {
         api.put("/status", Status::handleStatus);
         api.put("/status/update/linux", Linux::handleUpdateLinux);
         api.put("/status/update/windows", Windows::handleUpdateWindows);
+        api.put("/status/windows", Windows::handleUpdateWindows);
         api.put("/status/history", History::handleHistory);
 
         api.put("/user/register", Registration::handleRegistration);

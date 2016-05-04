@@ -26,16 +26,23 @@ public class Windows {
                     log.fine(request.getBody());
                     Map data = mapper.readValue(request.getBody(), Map.class);
 
-                    String user, name;
+                    String user = "";
+                    String name;
                     int time;
 
                     try {
                         name = (String) data.get("name");
-                        user = (String) data.get("user");
                         time = (int) data.get("time");
                     } catch (Exception e) {
                         log.log(Level.WARNING, "Invalid windows status update.", e);
                         return response.getHTTPError(400);
+                    }
+
+                    // User is not required.
+                    try {
+                        user = (String) data.get("user");
+                    }   catch (Exception e) {
+                        log.log(Level.FINER, "Windows update had no user.", e);
                     }
 
                     sqlData.updateWindows(name, user, time);

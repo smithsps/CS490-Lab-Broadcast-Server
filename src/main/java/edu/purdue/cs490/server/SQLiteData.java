@@ -56,8 +56,8 @@ public class SQLiteData
 	{
 		int total = 0;
 
-		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM WINDOWS WHERE TIME >= strftime('%s','now')-600");
-		//pstmt.setString(1, labroom);
+		PreparedStatement pstmt = c.prepareStatement("SELECT COUNT(*) FROM WINDOWS WHERE OCCUPIED = 1 AND name LIKE ? AND TIME >= strftime('%s','now')-600");
+		pstmt.setString(1, labroom);
 
 		ResultSet rs = pstmt.executeQuery();
 		total = rs.getInt(1);
@@ -97,16 +97,19 @@ public class SQLiteData
 
 	public void updateWindows(String name, String user, int time)
 	{
+		if (user == null) {
+			user = "";
+		}
+
 		try {
 			name = name.toLowerCase();
-			user = user.toLowerCase();
 
-
-			PreparedStatement pstmt = c.prepareStatement("INSERT OR REPLACE INTO LINUX (name, user, time) " +
-					"VALUES(?, ?, ?)");
+			PreparedStatement pstmt = c.prepareStatement("INSERT OR REPLACE INTO WINDOWS (name, user, time, occupied) " +
+					"VALUES(?, ?, ?, ?)");
 			pstmt.setString(1, name);
 			pstmt.setString(2, user);
 			pstmt.setTimestamp(3, new Timestamp(time));
+			pstmt.setBoolean(4, !user.equals(""));
 
 
 			pstmt.executeUpdate();
